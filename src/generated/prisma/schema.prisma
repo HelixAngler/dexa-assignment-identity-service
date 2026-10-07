@@ -1,0 +1,85 @@
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL_MAIN")
+  extensions = [citext]
+}
+
+generator identity_client {
+  provider        = "prisma-client-js"
+  output          = "../../../identity-service/src/generated/prisma"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+generator attendance_client {
+  provider        = "prisma-client-js"
+  output          = "../../../attendance-service/src/generated/prisma"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+enum EmployeeStatus {
+  active
+  deactivated
+}
+
+enum EmployeeRole {
+  employee
+  hrd
+}
+
+/// One row per person; doubles as the login identity (unique company email).
+model Employee {
+  id                 String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name               String
+  email              String         @unique @db.Citext
+  position           String
+  phone              String
+  photoObjectKey     String?        @map("photo_object_key")
+  status             EmployeeStatus @default(active)
+  role               EmployeeRole
+  passwordHash       String         @map("password_hash")
+  mustChangePassword Boolean        @default(false) @map("must_change_password")
+  authProvider       String         @default("local") @map("auth_provider")
+  createdAt          DateTime       @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt          DateTime       @default(now()) @map("updated_at") @db.Timestamptz()
+
+  attendanceSessions  AttendanceSession[]
+  profileChangeEvents ProfileChangeEvent[]
+
+  @@map("employees")
+}
+
+/// One working interval per clock-in; `clock_out_at` NULL means the session is open.
+model AttendanceSession {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  employeeId     String    @map("employee_id") @db.Uuid
+  workDate       DateTime  @map("work_date") @db.Date
+  clockInAt      DateTime  @map("clock_in_at") @db.Timestamptz()
+  clockOutAt     DateTime? @map("clock_out_at") @db.Timestamptz()
+  clockInKey     String    @unique @map("clock_in_key") @db.Uuid
+  clockOutKey    String?   @unique @map("clock_out_key") @db.Uuid
+  closedBySystem Boolean   @default(false) @map("closed_by_system")
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@index([workDate])
+  @@index([employeeId, workDate])
+  @@map("attendance_sessions")
+}
+
+/// Transactional outbox: written in the same transaction as the profile update.
+model ProfileChangeEvent {
+  id            String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  employeeId    String       @map("employee_id") @db.Uuid
+  actorId       String       @map("actor_id") @db.Uuid
+  actorRole     EmployeeRole @map("actor_role")
+  changedFields String[]     @map("changed_fields")
+  beforeValues  Json?        @map("before_values")
+  afterValues   Json?        @map("after_values")
+  occurredAt    DateTime     @default(now()) @map("occurred_at") @db.Timestamptz()
+  publishedAt   DateTime?    @map("published_at") @db.Timestamptz()
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@index([occurredAt])
+  @@map("profile_change_events")
+}
