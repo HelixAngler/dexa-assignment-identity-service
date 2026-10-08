@@ -1,6 +1,9 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import type { SessionPayload, SessionStore } from '../../auth/session.store';
+import {
+  SessionStore,
+  type SessionPayload,
+} from '../../auth/session.store';
 import { AppException } from '../app.exception';
 import { hasPermission, type Permission } from './permissions';
 import { PERMISSIONS_KEY, PUBLIC_KEY } from './session.decorators';
