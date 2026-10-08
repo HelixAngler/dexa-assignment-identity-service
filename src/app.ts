@@ -1,5 +1,5 @@
 import type { INestApplication } from '@nestjs/common';
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { APP_FILTER, NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 import { AuthController } from './auth/auth.controller';
@@ -9,19 +9,35 @@ import { SessionStore } from './auth/session.store';
 import { SessionGuard } from './common/auth/session.guard';
 import { HttpExceptionFilter } from './common/http-exception.filter';
 import { PrismaService } from './common/prisma.service';
+import { GLOBAL_PREFIX } from './config';
 import { HealthController } from './health.controller';
+import { PasswordChangeController } from './profile/password.controller';
+import { PhotoController } from './profile/photo.controller';
+import { PhotoStorage } from './profile/photo.storage';
+import { ProfileController } from './profile/profile.controller';
+import { ProfileService } from './profile/profile.service';
 
-export const GLOBAL_PREFIX = 'api/identity';
+// Kept re-exported: this used to be where the prefix constant lived.
+export { GLOBAL_PREFIX };
 
 @Module({
-  controllers: [HealthController, AuthController, PasswordController],
+  controllers: [
+    HealthController,
+    AuthController,
+    PasswordController,
+    PasswordChangeController,
+    ProfileController,
+    PhotoController,
+  ],
   providers: [
     HttpExceptionFilter,
     { provide: APP_FILTER, useExisting: HttpExceptionFilter },
     PrismaService,
+    ProfileService,
     SessionStore,
     LockoutStore,
     SessionGuard,
+    PhotoStorage,
   ],
 })
 class AppModule {}
@@ -37,5 +53,12 @@ export async function createApp(): Promise<INestApplication> {
   // edge while leaving plain local traffic unchanged.
   app.getHttpAdapter().getInstance().set('trust proxy', 1);
   await app.init();
+  // The photo bucket only matters once somebody uploads, so a store that is
+  // not reachable yet is reported instead of holding up the whole boot.
+  try {
+    await app.get(PhotoStorage).ensureBucket();
+  } catch (error) {
+    Logger.warn(`photo storage is not ready yet: ${String(error)}`);
+  }
   return app;
 }

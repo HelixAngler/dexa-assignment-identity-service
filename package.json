@@ -17,6 +17,7 @@
     "argon2": "^0.45.1",
     "cookie-parser": "^1.4.7",
     "ioredis": "^6.0.0",
+    "minio": "^8.0.7",
     "reflect-metadata": "^0.2",
     "rxjs": "^7.8"
   },
