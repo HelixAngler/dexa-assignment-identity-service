@@ -76,3 +76,28 @@ export function minioSettings(): MinioSettings {
     ),
   };
 }
+
+export interface AttendanceInternalSettings {
+  /** Origin of the attendance service, without a trailing slash. */
+  baseUrl: string;
+  /** Shared secret presented on service-to-service calls. */
+  token: string;
+}
+
+/**
+ * Where the attendance service's internal endpoints live, read from the
+ * environment on every call rather than captured once at start-up: a test
+ * that points the service at a local stand-in takes effect without rebuilding
+ * the application, and a deployment that rotates the address is picked up by
+ * the next request. A trailing slash is trimmed so callers can join paths
+ * without producing `//`.
+ */
+export function attendanceInternalSettings(): AttendanceInternalSettings {
+  return {
+    baseUrl: str(process.env.ATTENDANCE_INTERNAL_URL, 'http://localhost:3002').replace(
+      /\/+$/,
+      '',
+    ),
+    token: str(process.env.INTERNAL_API_TOKEN, ''),
+  };
+}

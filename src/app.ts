@@ -10,6 +10,9 @@ import { SessionGuard } from './common/auth/session.guard';
 import { HttpExceptionFilter } from './common/http-exception.filter';
 import { PrismaService } from './common/prisma.service';
 import { GLOBAL_PREFIX } from './config';
+import { CloseOpenClient } from './employees/close-open.client';
+import { EmployeesController } from './employees/employees.controller';
+import { EmployeesService } from './employees/employees.service';
 import { HealthController } from './health.controller';
 import { PasswordChangeController } from './profile/password.controller';
 import { PhotoController } from './profile/photo.controller';
@@ -28,6 +31,7 @@ export { GLOBAL_PREFIX };
     PasswordChangeController,
     ProfileController,
     PhotoController,
+    EmployeesController,
   ],
   providers: [
     HttpExceptionFilter,
@@ -38,6 +42,8 @@ export { GLOBAL_PREFIX };
     LockoutStore,
     SessionGuard,
     PhotoStorage,
+    EmployeesService,
+    CloseOpenClient,
   ],
 })
 class AppModule {}

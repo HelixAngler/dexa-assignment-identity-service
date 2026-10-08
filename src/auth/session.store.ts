@@ -49,6 +49,15 @@ export interface SessionStoreOptions {
 
 const SESSION_KEY_PREFIX = 'sess:';
 
+/**
+ * Key of the secondary index that maps one employee to the tokens their
+ * sessions were issued. It deliberately does not start with `sess:` so the
+ * `sess:*` walk used by the keep-one-session path never sees it; the index
+ * carries plain tokens and nothing else, so the frozen `sess:{token}` record
+ * and its payload are untouched by it.
+ */
+const EMPLOYEE_INDEX_PREFIX = 'emp-sess:';
+
 function isSessionPayload(value: unknown): value is SessionPayload {
   if (typeof value !== 'object' || value === null) {
     return false;
@@ -116,6 +125,7 @@ export class SessionStore implements OnModuleDestroy {
       issuedAt,
     });
     await this.redis.set(this.key(token), body, 'PX', ttlMs);
+    await this.indexToken(payload.employeeId, token);
   }
 
   /**
@@ -163,6 +173,29 @@ export class SessionStore implements OnModuleDestroy {
   }
 
   /**
+   * Revokes every session one employee holds — the whole account is signed
+   * out at once (password reset, deactivation).
+   *
+   * The tokens come from the secondary index written alongside each session
+   * at creation, so this is a `SMEMBERS` plus one `DEL` instead of a walk of
+   * the whole keyspace, and it needs no scan races to be reasoned about.
+   * Members whose session already expired simply match no key; the index is
+   * dropped as well so a later session starts from a clean list. Sessions
+   * created before the index existed are not listed here, which is why the
+   * keep-one-session path below still walks the keyspace on its own.
+   */
+  async deleteAllForEmployee(employeeId: string): Promise<number> {
+    const indexKey = this.employeeIndexKey(employeeId);
+    const tokens = await this.redis.smembers(indexKey);
+    let deleted = 0;
+    if (tokens.length > 0) {
+      deleted = await this.redis.del(...tokens.map((token) => this.key(token)));
+    }
+    await this.redis.del(indexKey);
+    return deleted;
+  }
+
+  /**
    * Rewrites the mutable fields of a live session while keeping its token and
    * its issue time, so an in-place change never extends the absolute age. Reads
    * through the normal path first, which means an expired or malformed record
@@ -187,12 +220,13 @@ export class SessionStore implements OnModuleDestroy {
    * (password changes keep the caller signed in and drop all other devices).
    *
    * The lookup is a stateless `SCAN` over `sess:*` with the employee id read
-   * from each value: no secondary index key exists, so nothing has to be kept
-   * in sync when sessions are created or expire. The keyspace holds at most one
-   * short-lived key per active session, which is small enough that walking it
-   * once is cheap — an index would cost more writes than this scan costs reads.
-   * A session created while the scan is in flight can be missed, which only
-   * matters if the caller is signing in on a second device at that exact moment.
+   * from each value: it has to see sessions that predate the per-employee
+   * token index, so it cannot be narrowed to that index without losing them.
+   * The keyspace holds at most one short-lived key per active session, which
+   * is small enough that walking it once is cheap — an index would cost more
+   * writes than this scan costs reads. A session created while the scan is in
+   * flight can be missed, which only matters if the caller is signing in on a
+   * second device at that exact moment.
    */
   async deleteOthersForEmployee(
     employeeId: string,
@@ -261,6 +295,22 @@ export class SessionStore implements OnModuleDestroy {
 
   private key(token: string): string {
     return `${SESSION_KEY_PREFIX}${token}`;
+  }
+
+  private employeeIndexKey(employeeId: string): string {
+    return `${EMPLOYEE_INDEX_PREFIX}${employeeId}`;
+  }
+
+  /**
+   * Adds the fresh token to the employee's index, carrying the absolute
+   * session lifetime so the index never outlives the newest session it could
+   * be asked about. Written after the session key, so an index entry can only
+   * ever point at a session that already exists.
+   */
+  private async indexToken(employeeId: string, token: string): Promise<void> {
+    const indexKey = this.employeeIndexKey(employeeId);
+    await this.redis.sadd(indexKey, token);
+    await this.redis.pexpire(indexKey, this.absoluteTtlMs);
   }
 
   private get redis(): Redis {
