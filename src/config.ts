@@ -68,8 +68,8 @@ export function minioSettings(): MinioSettings {
     port: num(process.env.MINIO_PORT, 9000),
     accessKey: str(process.env.MINIO_ACCESS_KEY, 'minioadmin'),
     secretKey: str(process.env.MINIO_SECRET_KEY, 'minioadmin'),
-    // The spec's data model names the private photo bucket; the environment
-    // can still point the service at another one.
+    // Profile photos live in a private `photos` bucket by default; the
+    // environment can still point the service at another one.
     bucket: str(process.env.MINIO_BUCKET, 'photos'),
     useSSL: ['true', '1'].includes(
       str(process.env.MINIO_USE_SSL, 'false').toLowerCase(),

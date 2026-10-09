@@ -143,7 +143,7 @@ export class PhotoController {
       await this.storage.remove(change.before);
     }
 
-    return toProfileResponse(await this.loadOwnEmployee(session));
+    return toProfileResponse(await this.loadOwnEmployee(session), session.role);
   }
 
   @Get()

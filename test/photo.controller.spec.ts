@@ -414,6 +414,7 @@ describe('profile photo endpoints', () => {
         position: 'QA Engineer',
         phone: '+62-811-0000-0707',
         photoUrl: SERVE_PATH,
+        role: 'employee',
       });
 
       const employee = await prisma.employee.findUnique({

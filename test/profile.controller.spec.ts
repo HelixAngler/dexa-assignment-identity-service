@@ -155,7 +155,7 @@ describe('GET/PATCH /profile', () => {
       });
     });
 
-    it('returns the five profile fields with photoUrl null while no photo exists', async () => {
+    it('returns the profile fields with photoUrl null while no photo exists', async () => {
       const token = await seedSession();
 
       const response = await getProfile(token);
@@ -167,6 +167,7 @@ describe('GET/PATCH /profile', () => {
         position: 'QA Engineer',
         phone: '+62-811-0000-5151',
         photoUrl: null,
+        role: 'employee',
       });
       expect(Object.keys(response.body).sort()).toEqual([
         'email',
@@ -174,7 +175,23 @@ describe('GET/PATCH /profile', () => {
         'phone',
         'photoUrl',
         'position',
+        'role',
       ]);
+    });
+
+    it('takes the role from the session payload rather than the stored row', async () => {
+      // The account itself is an employee row; only the session claims HRD,
+      // which is what the response has to report so a fresh browser tab can
+      // pick its console from the cookie alone.
+      const token = await seedSession('hrd');
+
+      const response = await getProfile(token);
+
+      expect(response.status).toBe(200);
+      expect(response.body.role).toBe('hrd');
+      expect(
+        (await prisma.employee.findUnique({ where: { id: employeeId } }))?.role,
+      ).toBe('employee');
     });
 
     it('points photoUrl at the authenticated photo route once a photo is stored', async () => {
@@ -215,6 +232,7 @@ describe('GET/PATCH /profile', () => {
         position: 'QA Engineer',
         phone: ACCEPTED_PHONE,
         photoUrl: null,
+        role: 'employee',
       });
 
       const employee = await prisma.employee.findUnique({

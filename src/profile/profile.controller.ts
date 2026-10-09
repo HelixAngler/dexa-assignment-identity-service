@@ -1,10 +1,12 @@
 import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { AppException } from '../common/app.exception';
+import type { SessionRole } from '../common/auth/permissions';
 import {
   RequirePermission,
   type GuardedRequest,
   SessionGuard,
 } from '../common/auth/session.guard';
+import type { SessionPayload } from '../auth/session.store';
 import { PrismaService } from '../common/prisma.service';
 import { GLOBAL_PREFIX } from '../config';
 import { ProfileService } from './profile.service';
@@ -26,13 +28,20 @@ const PHONE_CHARACTERS = /^[0-9+\-(). ]*$/;
 /** Minimum number of digits a phone number must carry, separators ignored. */
 const MIN_PHONE_DIGITS = 8;
 
-/** The five fields the profile screen shows; three of them are read-only. */
+/** The fields the profile screen shows; name, email and position are read-only. */
 export interface ProfileResponse {
   name: string;
   email: string;
   position: string;
   phone: string;
   photoUrl: string | null;
+  /**
+   * Role of the caller's current session. It is answered from the very
+   * payload the guard resolved for this request, so a browser that holds
+   * nothing but the session cookie learns which console it may open — no
+   * separate lookup, no client-side bookkeeping.
+   */
+  role: SessionRole;
 }
 
 interface EmployeeProfileRow {
@@ -63,12 +72,15 @@ export function isUsablePhone(phone: string): boolean {
 }
 
 /**
- * Turns a profile row into the five-field body every profile route answers
- * with, so the screen renders the same shape after a phone change, a photo
- * change or a plain read.
+ * Turns a profile row plus the session's role into the body every profile
+ * route answers with, so the screen renders the same shape after a phone
+ * change, a photo change or a plain read. The role always comes from the
+ * caller's session — never from the stored row — because it is the session
+ * the request was authorized under.
  */
 export function toProfileResponse(
   employee: EmployeeProfileRow,
+  role: SessionRole,
 ): ProfileResponse {
   return {
     name: employee.name,
@@ -76,13 +88,14 @@ export function toProfileResponse(
     position: employee.position,
     phone: employee.phone,
     photoUrl: employee.photoObjectKey === null ? null : PHOTO_URL,
+    role,
   };
 }
 
 /**
  * The employee's own profile.
  *
- * `GET` reads the five displayed fields; `name`, `email` and `position` are
+ * `GET` reads the displayed fields; `name`, `email` and `position` are
  * owned by HRD and are never written here — the PATCH handler reads only the
  * `phone` key of the body, so any other key a client sends (even one naming a
  * read-only field) is ignored rather than applied.
@@ -102,8 +115,8 @@ export class ProfileController {
   @Get()
   @RequirePermission('profile:read_own')
   async getProfile(@Req() request: GuardedRequest): Promise<ProfileResponse> {
-    const employee = await this.loadOwn(request);
-    return toProfileResponse(employee);
+    const session = this.requireSession(request);
+    return toProfileResponse(await this.loadOwn(session), session.role);
   }
 
   @Patch()
@@ -112,10 +125,7 @@ export class ProfileController {
     @Body() body: Record<string, unknown>,
     @Req() request: GuardedRequest,
   ): Promise<ProfileResponse> {
-    const session = request.session;
-    if (!session) {
-      throw new AppException(401, 'AUTH_REQUIRED');
-    }
+    const session = this.requireSession(request);
 
     const raw = body?.phone;
     const phone = typeof raw === 'string' ? raw.trim() : null;
@@ -125,15 +135,20 @@ export class ProfileController {
 
     await this.profile.changePhone(session.employeeId, phone, session.role);
 
-    return toProfileResponse(await this.loadOwn(request));
+    return toProfileResponse(await this.loadOwn(session), session.role);
   }
 
-  /** Loads the caller's own row, treating a vanished account as a dead session. */
-  private async loadOwn(request: GuardedRequest): Promise<EmployeeProfileRow> {
+  /** The session the guard attached; a request without one cannot be served. */
+  private requireSession(request: GuardedRequest): SessionPayload {
     const session = request.session;
     if (!session) {
       throw new AppException(401, 'AUTH_REQUIRED');
     }
+    return session;
+  }
+
+  /** Loads the caller's own row, treating a vanished account as a dead session. */
+  private async loadOwn(session: SessionPayload): Promise<EmployeeProfileRow> {
     const employee = await this.prisma.employee.findUnique({
       where: { id: session.employeeId },
     });
