@@ -323,19 +323,6 @@ describe('POST /auth/password/change', () => {
 
       expect(response.status).toBe(200);
 
-      const employee = await prisma.employee.findUnique({
-        where: { id: employeeId },
-      });
-      expect(employee).not.toBeNull();
-      expect(employee?.passwordHash.startsWith('$argon2id$')).toBe(true);
-      await expect(
-        argon2.verify(String(employee?.passwordHash), NEW_PASSWORD),
-      ).resolves.toBe(true);
-      await expect(
-        argon2.verify(String(employee?.passwordHash), CURRENT_PASSWORD),
-      ).resolves.toBe(false);
-      expect(employee?.mustChangePassword).toBe(false);
-
       const events = await eventsFor(employeeId);
       expect(events).toHaveLength(1);
       expect(events[0]).toMatchObject({
@@ -351,6 +338,19 @@ describe('POST /auth/password/change', () => {
       expect(serialized).not.toContain(NEW_PASSWORD);
       expect(serialized).not.toContain(CURRENT_PASSWORD);
       expect(serialized).not.toContain('$argon2');
+
+      const employee = await prisma.employee.findUnique({
+        where: { id: employeeId },
+      });
+      expect(employee).not.toBeNull();
+      expect(employee?.passwordHash.startsWith('$argon2id$')).toBe(true);
+      await expect(
+        argon2.verify(String(employee?.passwordHash), NEW_PASSWORD),
+      ).resolves.toBe(true);
+      await expect(
+        argon2.verify(String(employee?.passwordHash), CURRENT_PASSWORD),
+      ).resolves.toBe(false);
+      expect(employee?.mustChangePassword).toBe(false);
 
       // This session keeps working, every other session of the same person is gone.
       expect((await getProfile(currentToken)).status).toBe(200);

@@ -235,11 +235,6 @@ describe('GET/PATCH /profile', () => {
         role: 'employee',
       });
 
-      const employee = await prisma.employee.findUnique({
-        where: { id: employeeId },
-      });
-      expect(employee?.phone).toBe(ACCEPTED_PHONE);
-
       const events = await eventsForSelf();
       expect(events).toHaveLength(1);
       expect(events[0]).toMatchObject({
@@ -251,6 +246,11 @@ describe('GET/PATCH /profile', () => {
         afterValues: { phone: ACCEPTED_PHONE },
         publishedAt: null,
       });
+
+      const employee = await prisma.employee.findUnique({
+        where: { id: employeeId },
+      });
+      expect(employee?.phone).toBe(ACCEPTED_PHONE);
     });
 
     it('accepts digits, spaces and + - . ( ) and ignores every other key in the body', async () => {

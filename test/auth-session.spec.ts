@@ -388,19 +388,6 @@ describe('authenticated session routes', () => {
       });
       expect(response.status).toBe(200);
 
-      const employee = await prisma.employee.findUnique({
-        where: { id: changingId },
-      });
-      expect(employee).not.toBeNull();
-      expect(employee?.mustChangePassword).toBe(false);
-      expect(employee?.passwordHash.startsWith('$argon2id$')).toBe(true);
-      await expect(
-        argon2.verify(String(employee?.passwordHash), newPassword),
-      ).resolves.toBe(true);
-      await expect(
-        argon2.verify(String(employee?.passwordHash), FORCED_PASSWORD),
-      ).resolves.toBe(false);
-
       const events = await prisma.profileChangeEvent.findMany({
         where: { employeeId: changingId },
       });
@@ -417,6 +404,19 @@ describe('authenticated session routes', () => {
       const serialized = JSON.stringify(event);
       expect(serialized).not.toContain(newPassword);
       expect(serialized).not.toContain('$argon2');
+
+      const employee = await prisma.employee.findUnique({
+        where: { id: changingId },
+      });
+      expect(employee).not.toBeNull();
+      expect(employee?.mustChangePassword).toBe(false);
+      expect(employee?.passwordHash.startsWith('$argon2id$')).toBe(true);
+      await expect(
+        argon2.verify(String(employee?.passwordHash), newPassword),
+      ).resolves.toBe(true);
+      await expect(
+        argon2.verify(String(employee?.passwordHash), FORCED_PASSWORD),
+      ).resolves.toBe(false);
 
       const currentPayload = JSON.parse(
         String(await raw.get(sessionKey(currentToken))),

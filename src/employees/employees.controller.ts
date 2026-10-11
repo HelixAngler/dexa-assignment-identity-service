@@ -18,6 +18,7 @@ import {
   CreateEmployeeInput,
   CreateEmployeeResult,
   EmployeesService,
+  EmployeeRecord,
   EmployeeSummary,
   UpdateEmployeeInput,
 } from './employees.service';
@@ -145,6 +146,12 @@ export class EmployeesController {
   @RequirePermission('employee:read')
   list(): Promise<EmployeeSummary[]> {
     return this.employees.list();
+  }
+
+  @Get(':id')
+  @RequirePermission('employee:read')
+  getById(@Param('id') id: string): Promise<EmployeeRecord> {
+    return this.employees.getById(checkedEmployeeId(id));
   }
 
   @Post()

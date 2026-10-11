@@ -45,6 +45,10 @@ model Employee {
   attendanceSessions  AttendanceSession[]
   profileChangeEvents ProfileChangeEvent[]
 
+  hrAccessRequestsMade     HrAccessRequest[] @relation("HrAccessRequestMaker")
+  hrAccessRequestsChecked  HrAccessRequest[] @relation("HrAccessRequestChecker")
+  hrAccessRequestsTargeted HrAccessRequest[] @relation("HrAccessRequestTarget")
+
   @@map("employees")
 }
 
@@ -82,4 +86,57 @@ model ProfileChangeEvent {
 
   @@index([occurredAt])
   @@map("profile_change_events")
+}
+
+enum HrAccessRequestType {
+  add_hr
+  deactivate_hr
+  reactivate_hr
+  reset_password
+  update_hr
+}
+
+enum HrAccessRequestState {
+  pending
+  approved
+  rejected
+  withdrawn
+}
+
+/// Maker-checker governance record for HR account additions (add_hr),
+/// removals (deactivate_hr), restorations (reactivate_hr), password resets
+/// (reset_password) and profile edits (update_hr). Terminal states are
+/// immutable; the row is the permanent audit trail (maker, checker, decision
+/// time, note).
+model HrAccessRequest {
+  id    String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type  HrAccessRequestType
+  state HrAccessRequestState @default(pending)
+
+  /// add_hr: all proposed account fields. update_hr: proposed name, position
+  /// and phone (email stays NULL — an edit never re-addresses an account).
+  /// deactivate_hr, reactivate_hr and reset_password: NULL.
+  proposedName     String? @map("proposed_name")
+  proposedEmail    String? @map("proposed_email") @db.Citext
+  proposedPosition String? @map("proposed_position")
+  proposedPhone    String? @map("proposed_phone")
+
+  /// deactivate_hr, reactivate_hr, reset_password and update_hr: affected
+  /// account. add_hr: NULL.
+  targetEmployeeId String? @map("target_employee_id") @db.Uuid
+
+  makerEmployeeId   String    @map("maker_employee_id") @db.Uuid
+  checkerEmployeeId String?   @map("checker_employee_id") @db.Uuid
+  decisionNote      String?   @map("decision_note")
+  decidedAt         DateTime? @map("decided_at") @db.Timestamptz()
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz()
+
+  maker   Employee  @relation("HrAccessRequestMaker", fields: [makerEmployeeId], references: [id])
+  checker Employee? @relation("HrAccessRequestChecker", fields: [checkerEmployeeId], references: [id])
+  target  Employee? @relation("HrAccessRequestTarget", fields: [targetEmployeeId], references: [id])
+
+  @@index([state, createdAt])
+  @@map("hr_access_requests")
 }

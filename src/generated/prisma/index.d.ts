@@ -28,6 +28,15 @@ export type AttendanceSession = $Result.DefaultSelection<Prisma.$AttendanceSessi
  * Transactional outbox: written in the same transaction as the profile update.
  */
 export type ProfileChangeEvent = $Result.DefaultSelection<Prisma.$ProfileChangeEventPayload>
+/**
+ * Model HrAccessRequest
+ * Maker-checker governance record for HR account additions (add_hr),
+ * removals (deactivate_hr), restorations (reactivate_hr), password resets
+ * (reset_password) and profile edits (update_hr). Terminal states are
+ * immutable; the row is the permanent audit trail (maker, checker, decision
+ * time, note).
+ */
+export type HrAccessRequest = $Result.DefaultSelection<Prisma.$HrAccessRequestPayload>
 
 /**
  * Enums
@@ -48,6 +57,27 @@ export const EmployeeRole: {
 
 export type EmployeeRole = (typeof EmployeeRole)[keyof typeof EmployeeRole]
 
+
+export const HrAccessRequestType: {
+  add_hr: 'add_hr',
+  deactivate_hr: 'deactivate_hr',
+  reactivate_hr: 'reactivate_hr',
+  reset_password: 'reset_password',
+  update_hr: 'update_hr'
+};
+
+export type HrAccessRequestType = (typeof HrAccessRequestType)[keyof typeof HrAccessRequestType]
+
+
+export const HrAccessRequestState: {
+  pending: 'pending',
+  approved: 'approved',
+  rejected: 'rejected',
+  withdrawn: 'withdrawn'
+};
+
+export type HrAccessRequestState = (typeof HrAccessRequestState)[keyof typeof HrAccessRequestState]
+
 }
 
 export type EmployeeStatus = $Enums.EmployeeStatus
@@ -57,6 +87,14 @@ export const EmployeeStatus: typeof $Enums.EmployeeStatus
 export type EmployeeRole = $Enums.EmployeeRole
 
 export const EmployeeRole: typeof $Enums.EmployeeRole
+
+export type HrAccessRequestType = $Enums.HrAccessRequestType
+
+export const HrAccessRequestType: typeof $Enums.HrAccessRequestType
+
+export type HrAccessRequestState = $Enums.HrAccessRequestState
+
+export const HrAccessRequestState: typeof $Enums.HrAccessRequestState
 
 /**
  * ##  Prisma Client ʲˢ
@@ -212,6 +250,16 @@ export class PrismaClient<
     * ```
     */
   get profileChangeEvent(): Prisma.ProfileChangeEventDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.hrAccessRequest`: Exposes CRUD operations for the **HrAccessRequest** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more HrAccessRequests
+    * const hrAccessRequests = await prisma.hrAccessRequest.findMany()
+    * ```
+    */
+  get hrAccessRequest(): Prisma.HrAccessRequestDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -654,7 +702,8 @@ export namespace Prisma {
   export const ModelName: {
     Employee: 'Employee',
     AttendanceSession: 'AttendanceSession',
-    ProfileChangeEvent: 'ProfileChangeEvent'
+    ProfileChangeEvent: 'ProfileChangeEvent',
+    HrAccessRequest: 'HrAccessRequest'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -673,7 +722,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "employee" | "attendanceSession" | "profileChangeEvent"
+      modelProps: "employee" | "attendanceSession" | "profileChangeEvent" | "hrAccessRequest"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -899,6 +948,80 @@ export namespace Prisma {
           }
         }
       }
+      HrAccessRequest: {
+        payload: Prisma.$HrAccessRequestPayload<ExtArgs>
+        fields: Prisma.HrAccessRequestFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.HrAccessRequestFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HrAccessRequestPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.HrAccessRequestFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HrAccessRequestPayload>
+          }
+          findFirst: {
+            args: Prisma.HrAccessRequestFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HrAccessRequestPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.HrAccessRequestFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HrAccessRequestPayload>
+          }
+          findMany: {
+            args: Prisma.HrAccessRequestFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HrAccessRequestPayload>[]
+          }
+          create: {
+            args: Prisma.HrAccessRequestCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HrAccessRequestPayload>
+          }
+          createMany: {
+            args: Prisma.HrAccessRequestCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.HrAccessRequestCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HrAccessRequestPayload>[]
+          }
+          delete: {
+            args: Prisma.HrAccessRequestDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HrAccessRequestPayload>
+          }
+          update: {
+            args: Prisma.HrAccessRequestUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HrAccessRequestPayload>
+          }
+          deleteMany: {
+            args: Prisma.HrAccessRequestDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.HrAccessRequestUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.HrAccessRequestUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HrAccessRequestPayload>[]
+          }
+          upsert: {
+            args: Prisma.HrAccessRequestUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HrAccessRequestPayload>
+          }
+          aggregate: {
+            args: Prisma.HrAccessRequestAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateHrAccessRequest>
+          }
+          groupBy: {
+            args: Prisma.HrAccessRequestGroupByArgs<ExtArgs>
+            result: $Utils.Optional<HrAccessRequestGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.HrAccessRequestCountArgs<ExtArgs>
+            result: $Utils.Optional<HrAccessRequestCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -986,6 +1109,7 @@ export namespace Prisma {
     employee?: EmployeeOmit
     attendanceSession?: AttendanceSessionOmit
     profileChangeEvent?: ProfileChangeEventOmit
+    hrAccessRequest?: HrAccessRequestOmit
   }
 
   /* Types for Logging */
@@ -1082,11 +1206,17 @@ export namespace Prisma {
   export type EmployeeCountOutputType = {
     attendanceSessions: number
     profileChangeEvents: number
+    hrAccessRequestsMade: number
+    hrAccessRequestsChecked: number
+    hrAccessRequestsTargeted: number
   }
 
   export type EmployeeCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     attendanceSessions?: boolean | EmployeeCountOutputTypeCountAttendanceSessionsArgs
     profileChangeEvents?: boolean | EmployeeCountOutputTypeCountProfileChangeEventsArgs
+    hrAccessRequestsMade?: boolean | EmployeeCountOutputTypeCountHrAccessRequestsMadeArgs
+    hrAccessRequestsChecked?: boolean | EmployeeCountOutputTypeCountHrAccessRequestsCheckedArgs
+    hrAccessRequestsTargeted?: boolean | EmployeeCountOutputTypeCountHrAccessRequestsTargetedArgs
   }
 
   // Custom InputTypes
@@ -1112,6 +1242,27 @@ export namespace Prisma {
    */
   export type EmployeeCountOutputTypeCountProfileChangeEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProfileChangeEventWhereInput
+  }
+
+  /**
+   * EmployeeCountOutputType without action
+   */
+  export type EmployeeCountOutputTypeCountHrAccessRequestsMadeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: HrAccessRequestWhereInput
+  }
+
+  /**
+   * EmployeeCountOutputType without action
+   */
+  export type EmployeeCountOutputTypeCountHrAccessRequestsCheckedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: HrAccessRequestWhereInput
+  }
+
+  /**
+   * EmployeeCountOutputType without action
+   */
+  export type EmployeeCountOutputTypeCountHrAccessRequestsTargetedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: HrAccessRequestWhereInput
   }
 
 
@@ -1349,6 +1500,9 @@ export namespace Prisma {
     updatedAt?: boolean
     attendanceSessions?: boolean | Employee$attendanceSessionsArgs<ExtArgs>
     profileChangeEvents?: boolean | Employee$profileChangeEventsArgs<ExtArgs>
+    hrAccessRequestsMade?: boolean | Employee$hrAccessRequestsMadeArgs<ExtArgs>
+    hrAccessRequestsChecked?: boolean | Employee$hrAccessRequestsCheckedArgs<ExtArgs>
+    hrAccessRequestsTargeted?: boolean | Employee$hrAccessRequestsTargetedArgs<ExtArgs>
     _count?: boolean | EmployeeCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["employee"]>
 
@@ -1404,6 +1558,9 @@ export namespace Prisma {
   export type EmployeeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     attendanceSessions?: boolean | Employee$attendanceSessionsArgs<ExtArgs>
     profileChangeEvents?: boolean | Employee$profileChangeEventsArgs<ExtArgs>
+    hrAccessRequestsMade?: boolean | Employee$hrAccessRequestsMadeArgs<ExtArgs>
+    hrAccessRequestsChecked?: boolean | Employee$hrAccessRequestsCheckedArgs<ExtArgs>
+    hrAccessRequestsTargeted?: boolean | Employee$hrAccessRequestsTargetedArgs<ExtArgs>
     _count?: boolean | EmployeeCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type EmployeeIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1414,6 +1571,9 @@ export namespace Prisma {
     objects: {
       attendanceSessions: Prisma.$AttendanceSessionPayload<ExtArgs>[]
       profileChangeEvents: Prisma.$ProfileChangeEventPayload<ExtArgs>[]
+      hrAccessRequestsMade: Prisma.$HrAccessRequestPayload<ExtArgs>[]
+      hrAccessRequestsChecked: Prisma.$HrAccessRequestPayload<ExtArgs>[]
+      hrAccessRequestsTargeted: Prisma.$HrAccessRequestPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -1825,6 +1985,9 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     attendanceSessions<T extends Employee$attendanceSessionsArgs<ExtArgs> = {}>(args?: Subset<T, Employee$attendanceSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AttendanceSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     profileChangeEvents<T extends Employee$profileChangeEventsArgs<ExtArgs> = {}>(args?: Subset<T, Employee$profileChangeEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfileChangeEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    hrAccessRequestsMade<T extends Employee$hrAccessRequestsMadeArgs<ExtArgs> = {}>(args?: Subset<T, Employee$hrAccessRequestsMadeArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HrAccessRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    hrAccessRequestsChecked<T extends Employee$hrAccessRequestsCheckedArgs<ExtArgs> = {}>(args?: Subset<T, Employee$hrAccessRequestsCheckedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HrAccessRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    hrAccessRequestsTargeted<T extends Employee$hrAccessRequestsTargetedArgs<ExtArgs> = {}>(args?: Subset<T, Employee$hrAccessRequestsTargetedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HrAccessRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2300,6 +2463,78 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ProfileChangeEventScalarFieldEnum | ProfileChangeEventScalarFieldEnum[]
+  }
+
+  /**
+   * Employee.hrAccessRequestsMade
+   */
+  export type Employee$hrAccessRequestsMadeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HrAccessRequest
+     */
+    select?: HrAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HrAccessRequest
+     */
+    omit?: HrAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HrAccessRequestInclude<ExtArgs> | null
+    where?: HrAccessRequestWhereInput
+    orderBy?: HrAccessRequestOrderByWithRelationInput | HrAccessRequestOrderByWithRelationInput[]
+    cursor?: HrAccessRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: HrAccessRequestScalarFieldEnum | HrAccessRequestScalarFieldEnum[]
+  }
+
+  /**
+   * Employee.hrAccessRequestsChecked
+   */
+  export type Employee$hrAccessRequestsCheckedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HrAccessRequest
+     */
+    select?: HrAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HrAccessRequest
+     */
+    omit?: HrAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HrAccessRequestInclude<ExtArgs> | null
+    where?: HrAccessRequestWhereInput
+    orderBy?: HrAccessRequestOrderByWithRelationInput | HrAccessRequestOrderByWithRelationInput[]
+    cursor?: HrAccessRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: HrAccessRequestScalarFieldEnum | HrAccessRequestScalarFieldEnum[]
+  }
+
+  /**
+   * Employee.hrAccessRequestsTargeted
+   */
+  export type Employee$hrAccessRequestsTargetedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HrAccessRequest
+     */
+    select?: HrAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HrAccessRequest
+     */
+    omit?: HrAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HrAccessRequestInclude<ExtArgs> | null
+    where?: HrAccessRequestWhereInput
+    orderBy?: HrAccessRequestOrderByWithRelationInput | HrAccessRequestOrderByWithRelationInput[]
+    cursor?: HrAccessRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: HrAccessRequestScalarFieldEnum | HrAccessRequestScalarFieldEnum[]
   }
 
   /**
@@ -4517,6 +4752,1244 @@ export namespace Prisma {
 
 
   /**
+   * Model HrAccessRequest
+   */
+
+  export type AggregateHrAccessRequest = {
+    _count: HrAccessRequestCountAggregateOutputType | null
+    _min: HrAccessRequestMinAggregateOutputType | null
+    _max: HrAccessRequestMaxAggregateOutputType | null
+  }
+
+  export type HrAccessRequestMinAggregateOutputType = {
+    id: string | null
+    type: $Enums.HrAccessRequestType | null
+    state: $Enums.HrAccessRequestState | null
+    proposedName: string | null
+    proposedEmail: string | null
+    proposedPosition: string | null
+    proposedPhone: string | null
+    targetEmployeeId: string | null
+    makerEmployeeId: string | null
+    checkerEmployeeId: string | null
+    decisionNote: string | null
+    decidedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type HrAccessRequestMaxAggregateOutputType = {
+    id: string | null
+    type: $Enums.HrAccessRequestType | null
+    state: $Enums.HrAccessRequestState | null
+    proposedName: string | null
+    proposedEmail: string | null
+    proposedPosition: string | null
+    proposedPhone: string | null
+    targetEmployeeId: string | null
+    makerEmployeeId: string | null
+    checkerEmployeeId: string | null
+    decisionNote: string | null
+    decidedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type HrAccessRequestCountAggregateOutputType = {
+    id: number
+    type: number
+    state: number
+    proposedName: number
+    proposedEmail: number
+    proposedPosition: number
+    proposedPhone: number
+    targetEmployeeId: number
+    makerEmployeeId: number
+    checkerEmployeeId: number
+    decisionNote: number
+    decidedAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type HrAccessRequestMinAggregateInputType = {
+    id?: true
+    type?: true
+    state?: true
+    proposedName?: true
+    proposedEmail?: true
+    proposedPosition?: true
+    proposedPhone?: true
+    targetEmployeeId?: true
+    makerEmployeeId?: true
+    checkerEmployeeId?: true
+    decisionNote?: true
+    decidedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type HrAccessRequestMaxAggregateInputType = {
+    id?: true
+    type?: true
+    state?: true
+    proposedName?: true
+    proposedEmail?: true
+    proposedPosition?: true
+    proposedPhone?: true
+    targetEmployeeId?: true
+    makerEmployeeId?: true
+    checkerEmployeeId?: true
+    decisionNote?: true
+    decidedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type HrAccessRequestCountAggregateInputType = {
+    id?: true
+    type?: true
+    state?: true
+    proposedName?: true
+    proposedEmail?: true
+    proposedPosition?: true
+    proposedPhone?: true
+    targetEmployeeId?: true
+    makerEmployeeId?: true
+    checkerEmployeeId?: true
+    decisionNote?: true
+    decidedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type HrAccessRequestAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which HrAccessRequest to aggregate.
+     */
+    where?: HrAccessRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HrAccessRequests to fetch.
+     */
+    orderBy?: HrAccessRequestOrderByWithRelationInput | HrAccessRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: HrAccessRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HrAccessRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HrAccessRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned HrAccessRequests
+    **/
+    _count?: true | HrAccessRequestCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: HrAccessRequestMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: HrAccessRequestMaxAggregateInputType
+  }
+
+  export type GetHrAccessRequestAggregateType<T extends HrAccessRequestAggregateArgs> = {
+        [P in keyof T & keyof AggregateHrAccessRequest]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateHrAccessRequest[P]>
+      : GetScalarType<T[P], AggregateHrAccessRequest[P]>
+  }
+
+
+
+
+  export type HrAccessRequestGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: HrAccessRequestWhereInput
+    orderBy?: HrAccessRequestOrderByWithAggregationInput | HrAccessRequestOrderByWithAggregationInput[]
+    by: HrAccessRequestScalarFieldEnum[] | HrAccessRequestScalarFieldEnum
+    having?: HrAccessRequestScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: HrAccessRequestCountAggregateInputType | true
+    _min?: HrAccessRequestMinAggregateInputType
+    _max?: HrAccessRequestMaxAggregateInputType
+  }
+
+  export type HrAccessRequestGroupByOutputType = {
+    id: string
+    type: $Enums.HrAccessRequestType
+    state: $Enums.HrAccessRequestState
+    proposedName: string | null
+    proposedEmail: string | null
+    proposedPosition: string | null
+    proposedPhone: string | null
+    targetEmployeeId: string | null
+    makerEmployeeId: string
+    checkerEmployeeId: string | null
+    decisionNote: string | null
+    decidedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: HrAccessRequestCountAggregateOutputType | null
+    _min: HrAccessRequestMinAggregateOutputType | null
+    _max: HrAccessRequestMaxAggregateOutputType | null
+  }
+
+  type GetHrAccessRequestGroupByPayload<T extends HrAccessRequestGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<HrAccessRequestGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof HrAccessRequestGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], HrAccessRequestGroupByOutputType[P]>
+            : GetScalarType<T[P], HrAccessRequestGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type HrAccessRequestSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    state?: boolean
+    proposedName?: boolean
+    proposedEmail?: boolean
+    proposedPosition?: boolean
+    proposedPhone?: boolean
+    targetEmployeeId?: boolean
+    makerEmployeeId?: boolean
+    checkerEmployeeId?: boolean
+    decisionNote?: boolean
+    decidedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    maker?: boolean | EmployeeDefaultArgs<ExtArgs>
+    checker?: boolean | HrAccessRequest$checkerArgs<ExtArgs>
+    target?: boolean | HrAccessRequest$targetArgs<ExtArgs>
+  }, ExtArgs["result"]["hrAccessRequest"]>
+
+  export type HrAccessRequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    state?: boolean
+    proposedName?: boolean
+    proposedEmail?: boolean
+    proposedPosition?: boolean
+    proposedPhone?: boolean
+    targetEmployeeId?: boolean
+    makerEmployeeId?: boolean
+    checkerEmployeeId?: boolean
+    decisionNote?: boolean
+    decidedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    maker?: boolean | EmployeeDefaultArgs<ExtArgs>
+    checker?: boolean | HrAccessRequest$checkerArgs<ExtArgs>
+    target?: boolean | HrAccessRequest$targetArgs<ExtArgs>
+  }, ExtArgs["result"]["hrAccessRequest"]>
+
+  export type HrAccessRequestSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    state?: boolean
+    proposedName?: boolean
+    proposedEmail?: boolean
+    proposedPosition?: boolean
+    proposedPhone?: boolean
+    targetEmployeeId?: boolean
+    makerEmployeeId?: boolean
+    checkerEmployeeId?: boolean
+    decisionNote?: boolean
+    decidedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    maker?: boolean | EmployeeDefaultArgs<ExtArgs>
+    checker?: boolean | HrAccessRequest$checkerArgs<ExtArgs>
+    target?: boolean | HrAccessRequest$targetArgs<ExtArgs>
+  }, ExtArgs["result"]["hrAccessRequest"]>
+
+  export type HrAccessRequestSelectScalar = {
+    id?: boolean
+    type?: boolean
+    state?: boolean
+    proposedName?: boolean
+    proposedEmail?: boolean
+    proposedPosition?: boolean
+    proposedPhone?: boolean
+    targetEmployeeId?: boolean
+    makerEmployeeId?: boolean
+    checkerEmployeeId?: boolean
+    decisionNote?: boolean
+    decidedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type HrAccessRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "state" | "proposedName" | "proposedEmail" | "proposedPosition" | "proposedPhone" | "targetEmployeeId" | "makerEmployeeId" | "checkerEmployeeId" | "decisionNote" | "decidedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["hrAccessRequest"]>
+  export type HrAccessRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    maker?: boolean | EmployeeDefaultArgs<ExtArgs>
+    checker?: boolean | HrAccessRequest$checkerArgs<ExtArgs>
+    target?: boolean | HrAccessRequest$targetArgs<ExtArgs>
+  }
+  export type HrAccessRequestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    maker?: boolean | EmployeeDefaultArgs<ExtArgs>
+    checker?: boolean | HrAccessRequest$checkerArgs<ExtArgs>
+    target?: boolean | HrAccessRequest$targetArgs<ExtArgs>
+  }
+  export type HrAccessRequestIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    maker?: boolean | EmployeeDefaultArgs<ExtArgs>
+    checker?: boolean | HrAccessRequest$checkerArgs<ExtArgs>
+    target?: boolean | HrAccessRequest$targetArgs<ExtArgs>
+  }
+
+  export type $HrAccessRequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "HrAccessRequest"
+    objects: {
+      maker: Prisma.$EmployeePayload<ExtArgs>
+      checker: Prisma.$EmployeePayload<ExtArgs> | null
+      target: Prisma.$EmployeePayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      type: $Enums.HrAccessRequestType
+      state: $Enums.HrAccessRequestState
+      /**
+       * add_hr: all proposed account fields. update_hr: proposed name, position
+       * and phone (email stays NULL — an edit never re-addresses an account).
+       * deactivate_hr, reactivate_hr and reset_password: NULL.
+       */
+      proposedName: string | null
+      proposedEmail: string | null
+      proposedPosition: string | null
+      proposedPhone: string | null
+      /**
+       * deactivate_hr, reactivate_hr, reset_password and update_hr: affected
+       * account. add_hr: NULL.
+       */
+      targetEmployeeId: string | null
+      makerEmployeeId: string
+      checkerEmployeeId: string | null
+      decisionNote: string | null
+      decidedAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["hrAccessRequest"]>
+    composites: {}
+  }
+
+  type HrAccessRequestGetPayload<S extends boolean | null | undefined | HrAccessRequestDefaultArgs> = $Result.GetResult<Prisma.$HrAccessRequestPayload, S>
+
+  type HrAccessRequestCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<HrAccessRequestFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: HrAccessRequestCountAggregateInputType | true
+    }
+
+  export interface HrAccessRequestDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['HrAccessRequest'], meta: { name: 'HrAccessRequest' } }
+    /**
+     * Find zero or one HrAccessRequest that matches the filter.
+     * @param {HrAccessRequestFindUniqueArgs} args - Arguments to find a HrAccessRequest
+     * @example
+     * // Get one HrAccessRequest
+     * const hrAccessRequest = await prisma.hrAccessRequest.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends HrAccessRequestFindUniqueArgs>(args: SelectSubset<T, HrAccessRequestFindUniqueArgs<ExtArgs>>): Prisma__HrAccessRequestClient<$Result.GetResult<Prisma.$HrAccessRequestPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one HrAccessRequest that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {HrAccessRequestFindUniqueOrThrowArgs} args - Arguments to find a HrAccessRequest
+     * @example
+     * // Get one HrAccessRequest
+     * const hrAccessRequest = await prisma.hrAccessRequest.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends HrAccessRequestFindUniqueOrThrowArgs>(args: SelectSubset<T, HrAccessRequestFindUniqueOrThrowArgs<ExtArgs>>): Prisma__HrAccessRequestClient<$Result.GetResult<Prisma.$HrAccessRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first HrAccessRequest that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HrAccessRequestFindFirstArgs} args - Arguments to find a HrAccessRequest
+     * @example
+     * // Get one HrAccessRequest
+     * const hrAccessRequest = await prisma.hrAccessRequest.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends HrAccessRequestFindFirstArgs>(args?: SelectSubset<T, HrAccessRequestFindFirstArgs<ExtArgs>>): Prisma__HrAccessRequestClient<$Result.GetResult<Prisma.$HrAccessRequestPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first HrAccessRequest that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HrAccessRequestFindFirstOrThrowArgs} args - Arguments to find a HrAccessRequest
+     * @example
+     * // Get one HrAccessRequest
+     * const hrAccessRequest = await prisma.hrAccessRequest.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends HrAccessRequestFindFirstOrThrowArgs>(args?: SelectSubset<T, HrAccessRequestFindFirstOrThrowArgs<ExtArgs>>): Prisma__HrAccessRequestClient<$Result.GetResult<Prisma.$HrAccessRequestPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more HrAccessRequests that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HrAccessRequestFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all HrAccessRequests
+     * const hrAccessRequests = await prisma.hrAccessRequest.findMany()
+     * 
+     * // Get first 10 HrAccessRequests
+     * const hrAccessRequests = await prisma.hrAccessRequest.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const hrAccessRequestWithIdOnly = await prisma.hrAccessRequest.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends HrAccessRequestFindManyArgs>(args?: SelectSubset<T, HrAccessRequestFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HrAccessRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a HrAccessRequest.
+     * @param {HrAccessRequestCreateArgs} args - Arguments to create a HrAccessRequest.
+     * @example
+     * // Create one HrAccessRequest
+     * const HrAccessRequest = await prisma.hrAccessRequest.create({
+     *   data: {
+     *     // ... data to create a HrAccessRequest
+     *   }
+     * })
+     * 
+     */
+    create<T extends HrAccessRequestCreateArgs>(args: SelectSubset<T, HrAccessRequestCreateArgs<ExtArgs>>): Prisma__HrAccessRequestClient<$Result.GetResult<Prisma.$HrAccessRequestPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many HrAccessRequests.
+     * @param {HrAccessRequestCreateManyArgs} args - Arguments to create many HrAccessRequests.
+     * @example
+     * // Create many HrAccessRequests
+     * const hrAccessRequest = await prisma.hrAccessRequest.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends HrAccessRequestCreateManyArgs>(args?: SelectSubset<T, HrAccessRequestCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many HrAccessRequests and returns the data saved in the database.
+     * @param {HrAccessRequestCreateManyAndReturnArgs} args - Arguments to create many HrAccessRequests.
+     * @example
+     * // Create many HrAccessRequests
+     * const hrAccessRequest = await prisma.hrAccessRequest.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many HrAccessRequests and only return the `id`
+     * const hrAccessRequestWithIdOnly = await prisma.hrAccessRequest.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends HrAccessRequestCreateManyAndReturnArgs>(args?: SelectSubset<T, HrAccessRequestCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HrAccessRequestPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a HrAccessRequest.
+     * @param {HrAccessRequestDeleteArgs} args - Arguments to delete one HrAccessRequest.
+     * @example
+     * // Delete one HrAccessRequest
+     * const HrAccessRequest = await prisma.hrAccessRequest.delete({
+     *   where: {
+     *     // ... filter to delete one HrAccessRequest
+     *   }
+     * })
+     * 
+     */
+    delete<T extends HrAccessRequestDeleteArgs>(args: SelectSubset<T, HrAccessRequestDeleteArgs<ExtArgs>>): Prisma__HrAccessRequestClient<$Result.GetResult<Prisma.$HrAccessRequestPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one HrAccessRequest.
+     * @param {HrAccessRequestUpdateArgs} args - Arguments to update one HrAccessRequest.
+     * @example
+     * // Update one HrAccessRequest
+     * const hrAccessRequest = await prisma.hrAccessRequest.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends HrAccessRequestUpdateArgs>(args: SelectSubset<T, HrAccessRequestUpdateArgs<ExtArgs>>): Prisma__HrAccessRequestClient<$Result.GetResult<Prisma.$HrAccessRequestPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more HrAccessRequests.
+     * @param {HrAccessRequestDeleteManyArgs} args - Arguments to filter HrAccessRequests to delete.
+     * @example
+     * // Delete a few HrAccessRequests
+     * const { count } = await prisma.hrAccessRequest.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends HrAccessRequestDeleteManyArgs>(args?: SelectSubset<T, HrAccessRequestDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more HrAccessRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HrAccessRequestUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many HrAccessRequests
+     * const hrAccessRequest = await prisma.hrAccessRequest.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends HrAccessRequestUpdateManyArgs>(args: SelectSubset<T, HrAccessRequestUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more HrAccessRequests and returns the data updated in the database.
+     * @param {HrAccessRequestUpdateManyAndReturnArgs} args - Arguments to update many HrAccessRequests.
+     * @example
+     * // Update many HrAccessRequests
+     * const hrAccessRequest = await prisma.hrAccessRequest.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more HrAccessRequests and only return the `id`
+     * const hrAccessRequestWithIdOnly = await prisma.hrAccessRequest.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends HrAccessRequestUpdateManyAndReturnArgs>(args: SelectSubset<T, HrAccessRequestUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HrAccessRequestPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one HrAccessRequest.
+     * @param {HrAccessRequestUpsertArgs} args - Arguments to update or create a HrAccessRequest.
+     * @example
+     * // Update or create a HrAccessRequest
+     * const hrAccessRequest = await prisma.hrAccessRequest.upsert({
+     *   create: {
+     *     // ... data to create a HrAccessRequest
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the HrAccessRequest we want to update
+     *   }
+     * })
+     */
+    upsert<T extends HrAccessRequestUpsertArgs>(args: SelectSubset<T, HrAccessRequestUpsertArgs<ExtArgs>>): Prisma__HrAccessRequestClient<$Result.GetResult<Prisma.$HrAccessRequestPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of HrAccessRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HrAccessRequestCountArgs} args - Arguments to filter HrAccessRequests to count.
+     * @example
+     * // Count the number of HrAccessRequests
+     * const count = await prisma.hrAccessRequest.count({
+     *   where: {
+     *     // ... the filter for the HrAccessRequests we want to count
+     *   }
+     * })
+    **/
+    count<T extends HrAccessRequestCountArgs>(
+      args?: Subset<T, HrAccessRequestCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], HrAccessRequestCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a HrAccessRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HrAccessRequestAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends HrAccessRequestAggregateArgs>(args: Subset<T, HrAccessRequestAggregateArgs>): Prisma.PrismaPromise<GetHrAccessRequestAggregateType<T>>
+
+    /**
+     * Group by HrAccessRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HrAccessRequestGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends HrAccessRequestGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: HrAccessRequestGroupByArgs['orderBy'] }
+        : { orderBy?: HrAccessRequestGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, HrAccessRequestGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetHrAccessRequestGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the HrAccessRequest model
+   */
+  readonly fields: HrAccessRequestFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for HrAccessRequest.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__HrAccessRequestClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    maker<T extends EmployeeDefaultArgs<ExtArgs> = {}>(args?: Subset<T, EmployeeDefaultArgs<ExtArgs>>): Prisma__EmployeeClient<$Result.GetResult<Prisma.$EmployeePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    checker<T extends HrAccessRequest$checkerArgs<ExtArgs> = {}>(args?: Subset<T, HrAccessRequest$checkerArgs<ExtArgs>>): Prisma__EmployeeClient<$Result.GetResult<Prisma.$EmployeePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    target<T extends HrAccessRequest$targetArgs<ExtArgs> = {}>(args?: Subset<T, HrAccessRequest$targetArgs<ExtArgs>>): Prisma__EmployeeClient<$Result.GetResult<Prisma.$EmployeePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the HrAccessRequest model
+   */
+  interface HrAccessRequestFieldRefs {
+    readonly id: FieldRef<"HrAccessRequest", 'String'>
+    readonly type: FieldRef<"HrAccessRequest", 'HrAccessRequestType'>
+    readonly state: FieldRef<"HrAccessRequest", 'HrAccessRequestState'>
+    readonly proposedName: FieldRef<"HrAccessRequest", 'String'>
+    readonly proposedEmail: FieldRef<"HrAccessRequest", 'String'>
+    readonly proposedPosition: FieldRef<"HrAccessRequest", 'String'>
+    readonly proposedPhone: FieldRef<"HrAccessRequest", 'String'>
+    readonly targetEmployeeId: FieldRef<"HrAccessRequest", 'String'>
+    readonly makerEmployeeId: FieldRef<"HrAccessRequest", 'String'>
+    readonly checkerEmployeeId: FieldRef<"HrAccessRequest", 'String'>
+    readonly decisionNote: FieldRef<"HrAccessRequest", 'String'>
+    readonly decidedAt: FieldRef<"HrAccessRequest", 'DateTime'>
+    readonly createdAt: FieldRef<"HrAccessRequest", 'DateTime'>
+    readonly updatedAt: FieldRef<"HrAccessRequest", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * HrAccessRequest findUnique
+   */
+  export type HrAccessRequestFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HrAccessRequest
+     */
+    select?: HrAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HrAccessRequest
+     */
+    omit?: HrAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HrAccessRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which HrAccessRequest to fetch.
+     */
+    where: HrAccessRequestWhereUniqueInput
+  }
+
+  /**
+   * HrAccessRequest findUniqueOrThrow
+   */
+  export type HrAccessRequestFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HrAccessRequest
+     */
+    select?: HrAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HrAccessRequest
+     */
+    omit?: HrAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HrAccessRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which HrAccessRequest to fetch.
+     */
+    where: HrAccessRequestWhereUniqueInput
+  }
+
+  /**
+   * HrAccessRequest findFirst
+   */
+  export type HrAccessRequestFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HrAccessRequest
+     */
+    select?: HrAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HrAccessRequest
+     */
+    omit?: HrAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HrAccessRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which HrAccessRequest to fetch.
+     */
+    where?: HrAccessRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HrAccessRequests to fetch.
+     */
+    orderBy?: HrAccessRequestOrderByWithRelationInput | HrAccessRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for HrAccessRequests.
+     */
+    cursor?: HrAccessRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HrAccessRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HrAccessRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of HrAccessRequests.
+     */
+    distinct?: HrAccessRequestScalarFieldEnum | HrAccessRequestScalarFieldEnum[]
+  }
+
+  /**
+   * HrAccessRequest findFirstOrThrow
+   */
+  export type HrAccessRequestFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HrAccessRequest
+     */
+    select?: HrAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HrAccessRequest
+     */
+    omit?: HrAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HrAccessRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which HrAccessRequest to fetch.
+     */
+    where?: HrAccessRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HrAccessRequests to fetch.
+     */
+    orderBy?: HrAccessRequestOrderByWithRelationInput | HrAccessRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for HrAccessRequests.
+     */
+    cursor?: HrAccessRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HrAccessRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HrAccessRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of HrAccessRequests.
+     */
+    distinct?: HrAccessRequestScalarFieldEnum | HrAccessRequestScalarFieldEnum[]
+  }
+
+  /**
+   * HrAccessRequest findMany
+   */
+  export type HrAccessRequestFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HrAccessRequest
+     */
+    select?: HrAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HrAccessRequest
+     */
+    omit?: HrAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HrAccessRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which HrAccessRequests to fetch.
+     */
+    where?: HrAccessRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HrAccessRequests to fetch.
+     */
+    orderBy?: HrAccessRequestOrderByWithRelationInput | HrAccessRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing HrAccessRequests.
+     */
+    cursor?: HrAccessRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HrAccessRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HrAccessRequests.
+     */
+    skip?: number
+    distinct?: HrAccessRequestScalarFieldEnum | HrAccessRequestScalarFieldEnum[]
+  }
+
+  /**
+   * HrAccessRequest create
+   */
+  export type HrAccessRequestCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HrAccessRequest
+     */
+    select?: HrAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HrAccessRequest
+     */
+    omit?: HrAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HrAccessRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to create a HrAccessRequest.
+     */
+    data: XOR<HrAccessRequestCreateInput, HrAccessRequestUncheckedCreateInput>
+  }
+
+  /**
+   * HrAccessRequest createMany
+   */
+  export type HrAccessRequestCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many HrAccessRequests.
+     */
+    data: HrAccessRequestCreateManyInput | HrAccessRequestCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * HrAccessRequest createManyAndReturn
+   */
+  export type HrAccessRequestCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HrAccessRequest
+     */
+    select?: HrAccessRequestSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the HrAccessRequest
+     */
+    omit?: HrAccessRequestOmit<ExtArgs> | null
+    /**
+     * The data used to create many HrAccessRequests.
+     */
+    data: HrAccessRequestCreateManyInput | HrAccessRequestCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HrAccessRequestIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * HrAccessRequest update
+   */
+  export type HrAccessRequestUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HrAccessRequest
+     */
+    select?: HrAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HrAccessRequest
+     */
+    omit?: HrAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HrAccessRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to update a HrAccessRequest.
+     */
+    data: XOR<HrAccessRequestUpdateInput, HrAccessRequestUncheckedUpdateInput>
+    /**
+     * Choose, which HrAccessRequest to update.
+     */
+    where: HrAccessRequestWhereUniqueInput
+  }
+
+  /**
+   * HrAccessRequest updateMany
+   */
+  export type HrAccessRequestUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update HrAccessRequests.
+     */
+    data: XOR<HrAccessRequestUpdateManyMutationInput, HrAccessRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which HrAccessRequests to update
+     */
+    where?: HrAccessRequestWhereInput
+    /**
+     * Limit how many HrAccessRequests to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * HrAccessRequest updateManyAndReturn
+   */
+  export type HrAccessRequestUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HrAccessRequest
+     */
+    select?: HrAccessRequestSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the HrAccessRequest
+     */
+    omit?: HrAccessRequestOmit<ExtArgs> | null
+    /**
+     * The data used to update HrAccessRequests.
+     */
+    data: XOR<HrAccessRequestUpdateManyMutationInput, HrAccessRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which HrAccessRequests to update
+     */
+    where?: HrAccessRequestWhereInput
+    /**
+     * Limit how many HrAccessRequests to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HrAccessRequestIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * HrAccessRequest upsert
+   */
+  export type HrAccessRequestUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HrAccessRequest
+     */
+    select?: HrAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HrAccessRequest
+     */
+    omit?: HrAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HrAccessRequestInclude<ExtArgs> | null
+    /**
+     * The filter to search for the HrAccessRequest to update in case it exists.
+     */
+    where: HrAccessRequestWhereUniqueInput
+    /**
+     * In case the HrAccessRequest found by the `where` argument doesn't exist, create a new HrAccessRequest with this data.
+     */
+    create: XOR<HrAccessRequestCreateInput, HrAccessRequestUncheckedCreateInput>
+    /**
+     * In case the HrAccessRequest was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<HrAccessRequestUpdateInput, HrAccessRequestUncheckedUpdateInput>
+  }
+
+  /**
+   * HrAccessRequest delete
+   */
+  export type HrAccessRequestDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HrAccessRequest
+     */
+    select?: HrAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HrAccessRequest
+     */
+    omit?: HrAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HrAccessRequestInclude<ExtArgs> | null
+    /**
+     * Filter which HrAccessRequest to delete.
+     */
+    where: HrAccessRequestWhereUniqueInput
+  }
+
+  /**
+   * HrAccessRequest deleteMany
+   */
+  export type HrAccessRequestDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which HrAccessRequests to delete
+     */
+    where?: HrAccessRequestWhereInput
+    /**
+     * Limit how many HrAccessRequests to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * HrAccessRequest.checker
+   */
+  export type HrAccessRequest$checkerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Employee
+     */
+    select?: EmployeeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Employee
+     */
+    omit?: EmployeeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmployeeInclude<ExtArgs> | null
+    where?: EmployeeWhereInput
+  }
+
+  /**
+   * HrAccessRequest.target
+   */
+  export type HrAccessRequest$targetArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Employee
+     */
+    select?: EmployeeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Employee
+     */
+    omit?: EmployeeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmployeeInclude<ExtArgs> | null
+    where?: EmployeeWhereInput
+  }
+
+  /**
+   * HrAccessRequest without action
+   */
+  export type HrAccessRequestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HrAccessRequest
+     */
+    select?: HrAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HrAccessRequest
+     */
+    omit?: HrAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HrAccessRequestInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -4576,6 +6049,26 @@ export namespace Prisma {
   };
 
   export type ProfileChangeEventScalarFieldEnum = (typeof ProfileChangeEventScalarFieldEnum)[keyof typeof ProfileChangeEventScalarFieldEnum]
+
+
+  export const HrAccessRequestScalarFieldEnum: {
+    id: 'id',
+    type: 'type',
+    state: 'state',
+    proposedName: 'proposedName',
+    proposedEmail: 'proposedEmail',
+    proposedPosition: 'proposedPosition',
+    proposedPhone: 'proposedPhone',
+    targetEmployeeId: 'targetEmployeeId',
+    makerEmployeeId: 'makerEmployeeId',
+    checkerEmployeeId: 'checkerEmployeeId',
+    decisionNote: 'decisionNote',
+    decidedAt: 'decidedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type HrAccessRequestScalarFieldEnum = (typeof HrAccessRequestScalarFieldEnum)[keyof typeof HrAccessRequestScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -4702,6 +6195,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'HrAccessRequestType'
+   */
+  export type EnumHrAccessRequestTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'HrAccessRequestType'>
+    
+
+
+  /**
+   * Reference to a field of type 'HrAccessRequestType[]'
+   */
+  export type ListEnumHrAccessRequestTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'HrAccessRequestType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'HrAccessRequestState'
+   */
+  export type EnumHrAccessRequestStateFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'HrAccessRequestState'>
+    
+
+
+  /**
+   * Reference to a field of type 'HrAccessRequestState[]'
+   */
+  export type ListEnumHrAccessRequestStateFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'HrAccessRequestState[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -4737,6 +6258,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Employee"> | Date | string
     attendanceSessions?: AttendanceSessionListRelationFilter
     profileChangeEvents?: ProfileChangeEventListRelationFilter
+    hrAccessRequestsMade?: HrAccessRequestListRelationFilter
+    hrAccessRequestsChecked?: HrAccessRequestListRelationFilter
+    hrAccessRequestsTargeted?: HrAccessRequestListRelationFilter
   }
 
   export type EmployeeOrderByWithRelationInput = {
@@ -4755,6 +6279,9 @@ export namespace Prisma {
     updatedAt?: SortOrder
     attendanceSessions?: AttendanceSessionOrderByRelationAggregateInput
     profileChangeEvents?: ProfileChangeEventOrderByRelationAggregateInput
+    hrAccessRequestsMade?: HrAccessRequestOrderByRelationAggregateInput
+    hrAccessRequestsChecked?: HrAccessRequestOrderByRelationAggregateInput
+    hrAccessRequestsTargeted?: HrAccessRequestOrderByRelationAggregateInput
   }
 
   export type EmployeeWhereUniqueInput = Prisma.AtLeast<{
@@ -4776,6 +6303,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Employee"> | Date | string
     attendanceSessions?: AttendanceSessionListRelationFilter
     profileChangeEvents?: ProfileChangeEventListRelationFilter
+    hrAccessRequestsMade?: HrAccessRequestListRelationFilter
+    hrAccessRequestsChecked?: HrAccessRequestListRelationFilter
+    hrAccessRequestsTargeted?: HrAccessRequestListRelationFilter
   }, "id" | "email">
 
   export type EmployeeOrderByWithAggregationInput = {
@@ -4961,6 +6491,112 @@ export namespace Prisma {
     publishedAt?: DateTimeNullableWithAggregatesFilter<"ProfileChangeEvent"> | Date | string | null
   }
 
+  export type HrAccessRequestWhereInput = {
+    AND?: HrAccessRequestWhereInput | HrAccessRequestWhereInput[]
+    OR?: HrAccessRequestWhereInput[]
+    NOT?: HrAccessRequestWhereInput | HrAccessRequestWhereInput[]
+    id?: UuidFilter<"HrAccessRequest"> | string
+    type?: EnumHrAccessRequestTypeFilter<"HrAccessRequest"> | $Enums.HrAccessRequestType
+    state?: EnumHrAccessRequestStateFilter<"HrAccessRequest"> | $Enums.HrAccessRequestState
+    proposedName?: StringNullableFilter<"HrAccessRequest"> | string | null
+    proposedEmail?: StringNullableFilter<"HrAccessRequest"> | string | null
+    proposedPosition?: StringNullableFilter<"HrAccessRequest"> | string | null
+    proposedPhone?: StringNullableFilter<"HrAccessRequest"> | string | null
+    targetEmployeeId?: UuidNullableFilter<"HrAccessRequest"> | string | null
+    makerEmployeeId?: UuidFilter<"HrAccessRequest"> | string
+    checkerEmployeeId?: UuidNullableFilter<"HrAccessRequest"> | string | null
+    decisionNote?: StringNullableFilter<"HrAccessRequest"> | string | null
+    decidedAt?: DateTimeNullableFilter<"HrAccessRequest"> | Date | string | null
+    createdAt?: DateTimeFilter<"HrAccessRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"HrAccessRequest"> | Date | string
+    maker?: XOR<EmployeeScalarRelationFilter, EmployeeWhereInput>
+    checker?: XOR<EmployeeNullableScalarRelationFilter, EmployeeWhereInput> | null
+    target?: XOR<EmployeeNullableScalarRelationFilter, EmployeeWhereInput> | null
+  }
+
+  export type HrAccessRequestOrderByWithRelationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    state?: SortOrder
+    proposedName?: SortOrderInput | SortOrder
+    proposedEmail?: SortOrderInput | SortOrder
+    proposedPosition?: SortOrderInput | SortOrder
+    proposedPhone?: SortOrderInput | SortOrder
+    targetEmployeeId?: SortOrderInput | SortOrder
+    makerEmployeeId?: SortOrder
+    checkerEmployeeId?: SortOrderInput | SortOrder
+    decisionNote?: SortOrderInput | SortOrder
+    decidedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    maker?: EmployeeOrderByWithRelationInput
+    checker?: EmployeeOrderByWithRelationInput
+    target?: EmployeeOrderByWithRelationInput
+  }
+
+  export type HrAccessRequestWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: HrAccessRequestWhereInput | HrAccessRequestWhereInput[]
+    OR?: HrAccessRequestWhereInput[]
+    NOT?: HrAccessRequestWhereInput | HrAccessRequestWhereInput[]
+    type?: EnumHrAccessRequestTypeFilter<"HrAccessRequest"> | $Enums.HrAccessRequestType
+    state?: EnumHrAccessRequestStateFilter<"HrAccessRequest"> | $Enums.HrAccessRequestState
+    proposedName?: StringNullableFilter<"HrAccessRequest"> | string | null
+    proposedEmail?: StringNullableFilter<"HrAccessRequest"> | string | null
+    proposedPosition?: StringNullableFilter<"HrAccessRequest"> | string | null
+    proposedPhone?: StringNullableFilter<"HrAccessRequest"> | string | null
+    targetEmployeeId?: UuidNullableFilter<"HrAccessRequest"> | string | null
+    makerEmployeeId?: UuidFilter<"HrAccessRequest"> | string
+    checkerEmployeeId?: UuidNullableFilter<"HrAccessRequest"> | string | null
+    decisionNote?: StringNullableFilter<"HrAccessRequest"> | string | null
+    decidedAt?: DateTimeNullableFilter<"HrAccessRequest"> | Date | string | null
+    createdAt?: DateTimeFilter<"HrAccessRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"HrAccessRequest"> | Date | string
+    maker?: XOR<EmployeeScalarRelationFilter, EmployeeWhereInput>
+    checker?: XOR<EmployeeNullableScalarRelationFilter, EmployeeWhereInput> | null
+    target?: XOR<EmployeeNullableScalarRelationFilter, EmployeeWhereInput> | null
+  }, "id">
+
+  export type HrAccessRequestOrderByWithAggregationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    state?: SortOrder
+    proposedName?: SortOrderInput | SortOrder
+    proposedEmail?: SortOrderInput | SortOrder
+    proposedPosition?: SortOrderInput | SortOrder
+    proposedPhone?: SortOrderInput | SortOrder
+    targetEmployeeId?: SortOrderInput | SortOrder
+    makerEmployeeId?: SortOrder
+    checkerEmployeeId?: SortOrderInput | SortOrder
+    decisionNote?: SortOrderInput | SortOrder
+    decidedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: HrAccessRequestCountOrderByAggregateInput
+    _max?: HrAccessRequestMaxOrderByAggregateInput
+    _min?: HrAccessRequestMinOrderByAggregateInput
+  }
+
+  export type HrAccessRequestScalarWhereWithAggregatesInput = {
+    AND?: HrAccessRequestScalarWhereWithAggregatesInput | HrAccessRequestScalarWhereWithAggregatesInput[]
+    OR?: HrAccessRequestScalarWhereWithAggregatesInput[]
+    NOT?: HrAccessRequestScalarWhereWithAggregatesInput | HrAccessRequestScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"HrAccessRequest"> | string
+    type?: EnumHrAccessRequestTypeWithAggregatesFilter<"HrAccessRequest"> | $Enums.HrAccessRequestType
+    state?: EnumHrAccessRequestStateWithAggregatesFilter<"HrAccessRequest"> | $Enums.HrAccessRequestState
+    proposedName?: StringNullableWithAggregatesFilter<"HrAccessRequest"> | string | null
+    proposedEmail?: StringNullableWithAggregatesFilter<"HrAccessRequest"> | string | null
+    proposedPosition?: StringNullableWithAggregatesFilter<"HrAccessRequest"> | string | null
+    proposedPhone?: StringNullableWithAggregatesFilter<"HrAccessRequest"> | string | null
+    targetEmployeeId?: UuidNullableWithAggregatesFilter<"HrAccessRequest"> | string | null
+    makerEmployeeId?: UuidWithAggregatesFilter<"HrAccessRequest"> | string
+    checkerEmployeeId?: UuidNullableWithAggregatesFilter<"HrAccessRequest"> | string | null
+    decisionNote?: StringNullableWithAggregatesFilter<"HrAccessRequest"> | string | null
+    decidedAt?: DateTimeNullableWithAggregatesFilter<"HrAccessRequest"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"HrAccessRequest"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"HrAccessRequest"> | Date | string
+  }
+
   export type EmployeeCreateInput = {
     id?: string
     name: string
@@ -4977,6 +6613,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     attendanceSessions?: AttendanceSessionCreateNestedManyWithoutEmployeeInput
     profileChangeEvents?: ProfileChangeEventCreateNestedManyWithoutEmployeeInput
+    hrAccessRequestsMade?: HrAccessRequestCreateNestedManyWithoutMakerInput
+    hrAccessRequestsChecked?: HrAccessRequestCreateNestedManyWithoutCheckerInput
+    hrAccessRequestsTargeted?: HrAccessRequestCreateNestedManyWithoutTargetInput
   }
 
   export type EmployeeUncheckedCreateInput = {
@@ -4995,6 +6634,9 @@ export namespace Prisma {
     updatedAt?: Date | string
     attendanceSessions?: AttendanceSessionUncheckedCreateNestedManyWithoutEmployeeInput
     profileChangeEvents?: ProfileChangeEventUncheckedCreateNestedManyWithoutEmployeeInput
+    hrAccessRequestsMade?: HrAccessRequestUncheckedCreateNestedManyWithoutMakerInput
+    hrAccessRequestsChecked?: HrAccessRequestUncheckedCreateNestedManyWithoutCheckerInput
+    hrAccessRequestsTargeted?: HrAccessRequestUncheckedCreateNestedManyWithoutTargetInput
   }
 
   export type EmployeeUpdateInput = {
@@ -5013,6 +6655,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attendanceSessions?: AttendanceSessionUpdateManyWithoutEmployeeNestedInput
     profileChangeEvents?: ProfileChangeEventUpdateManyWithoutEmployeeNestedInput
+    hrAccessRequestsMade?: HrAccessRequestUpdateManyWithoutMakerNestedInput
+    hrAccessRequestsChecked?: HrAccessRequestUpdateManyWithoutCheckerNestedInput
+    hrAccessRequestsTargeted?: HrAccessRequestUpdateManyWithoutTargetNestedInput
   }
 
   export type EmployeeUncheckedUpdateInput = {
@@ -5031,6 +6676,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attendanceSessions?: AttendanceSessionUncheckedUpdateManyWithoutEmployeeNestedInput
     profileChangeEvents?: ProfileChangeEventUncheckedUpdateManyWithoutEmployeeNestedInput
+    hrAccessRequestsMade?: HrAccessRequestUncheckedUpdateManyWithoutMakerNestedInput
+    hrAccessRequestsChecked?: HrAccessRequestUncheckedUpdateManyWithoutCheckerNestedInput
+    hrAccessRequestsTargeted?: HrAccessRequestUncheckedUpdateManyWithoutTargetNestedInput
   }
 
   export type EmployeeCreateManyInput = {
@@ -5240,6 +6888,122 @@ export namespace Prisma {
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type HrAccessRequestCreateInput = {
+    id?: string
+    type: $Enums.HrAccessRequestType
+    state?: $Enums.HrAccessRequestState
+    proposedName?: string | null
+    proposedEmail?: string | null
+    proposedPosition?: string | null
+    proposedPhone?: string | null
+    decisionNote?: string | null
+    decidedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    maker: EmployeeCreateNestedOneWithoutHrAccessRequestsMadeInput
+    checker?: EmployeeCreateNestedOneWithoutHrAccessRequestsCheckedInput
+    target?: EmployeeCreateNestedOneWithoutHrAccessRequestsTargetedInput
+  }
+
+  export type HrAccessRequestUncheckedCreateInput = {
+    id?: string
+    type: $Enums.HrAccessRequestType
+    state?: $Enums.HrAccessRequestState
+    proposedName?: string | null
+    proposedEmail?: string | null
+    proposedPosition?: string | null
+    proposedPhone?: string | null
+    targetEmployeeId?: string | null
+    makerEmployeeId: string
+    checkerEmployeeId?: string | null
+    decisionNote?: string | null
+    decidedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type HrAccessRequestUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumHrAccessRequestTypeFieldUpdateOperationsInput | $Enums.HrAccessRequestType
+    state?: EnumHrAccessRequestStateFieldUpdateOperationsInput | $Enums.HrAccessRequestState
+    proposedName?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    decisionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    decidedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maker?: EmployeeUpdateOneRequiredWithoutHrAccessRequestsMadeNestedInput
+    checker?: EmployeeUpdateOneWithoutHrAccessRequestsCheckedNestedInput
+    target?: EmployeeUpdateOneWithoutHrAccessRequestsTargetedNestedInput
+  }
+
+  export type HrAccessRequestUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumHrAccessRequestTypeFieldUpdateOperationsInput | $Enums.HrAccessRequestType
+    state?: EnumHrAccessRequestStateFieldUpdateOperationsInput | $Enums.HrAccessRequestState
+    proposedName?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    targetEmployeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    makerEmployeeId?: StringFieldUpdateOperationsInput | string
+    checkerEmployeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    decisionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    decidedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HrAccessRequestCreateManyInput = {
+    id?: string
+    type: $Enums.HrAccessRequestType
+    state?: $Enums.HrAccessRequestState
+    proposedName?: string | null
+    proposedEmail?: string | null
+    proposedPosition?: string | null
+    proposedPhone?: string | null
+    targetEmployeeId?: string | null
+    makerEmployeeId: string
+    checkerEmployeeId?: string | null
+    decisionNote?: string | null
+    decidedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type HrAccessRequestUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumHrAccessRequestTypeFieldUpdateOperationsInput | $Enums.HrAccessRequestType
+    state?: EnumHrAccessRequestStateFieldUpdateOperationsInput | $Enums.HrAccessRequestState
+    proposedName?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    decisionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    decidedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HrAccessRequestUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumHrAccessRequestTypeFieldUpdateOperationsInput | $Enums.HrAccessRequestType
+    state?: EnumHrAccessRequestStateFieldUpdateOperationsInput | $Enums.HrAccessRequestState
+    proposedName?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    targetEmployeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    makerEmployeeId?: StringFieldUpdateOperationsInput | string
+    checkerEmployeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    decisionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    decidedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type UuidFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -5324,6 +7088,12 @@ export namespace Prisma {
     none?: ProfileChangeEventWhereInput
   }
 
+  export type HrAccessRequestListRelationFilter = {
+    every?: HrAccessRequestWhereInput
+    some?: HrAccessRequestWhereInput
+    none?: HrAccessRequestWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -5334,6 +7104,10 @@ export namespace Prisma {
   }
 
   export type ProfileChangeEventOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type HrAccessRequestOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -5655,6 +7429,96 @@ export namespace Prisma {
     _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
+  export type EnumHrAccessRequestTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.HrAccessRequestType | EnumHrAccessRequestTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.HrAccessRequestType[] | ListEnumHrAccessRequestTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.HrAccessRequestType[] | ListEnumHrAccessRequestTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumHrAccessRequestTypeFilter<$PrismaModel> | $Enums.HrAccessRequestType
+  }
+
+  export type EnumHrAccessRequestStateFilter<$PrismaModel = never> = {
+    equals?: $Enums.HrAccessRequestState | EnumHrAccessRequestStateFieldRefInput<$PrismaModel>
+    in?: $Enums.HrAccessRequestState[] | ListEnumHrAccessRequestStateFieldRefInput<$PrismaModel>
+    notIn?: $Enums.HrAccessRequestState[] | ListEnumHrAccessRequestStateFieldRefInput<$PrismaModel>
+    not?: NestedEnumHrAccessRequestStateFilter<$PrismaModel> | $Enums.HrAccessRequestState
+  }
+
+  export type EmployeeNullableScalarRelationFilter = {
+    is?: EmployeeWhereInput | null
+    isNot?: EmployeeWhereInput | null
+  }
+
+  export type HrAccessRequestCountOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    state?: SortOrder
+    proposedName?: SortOrder
+    proposedEmail?: SortOrder
+    proposedPosition?: SortOrder
+    proposedPhone?: SortOrder
+    targetEmployeeId?: SortOrder
+    makerEmployeeId?: SortOrder
+    checkerEmployeeId?: SortOrder
+    decisionNote?: SortOrder
+    decidedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type HrAccessRequestMaxOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    state?: SortOrder
+    proposedName?: SortOrder
+    proposedEmail?: SortOrder
+    proposedPosition?: SortOrder
+    proposedPhone?: SortOrder
+    targetEmployeeId?: SortOrder
+    makerEmployeeId?: SortOrder
+    checkerEmployeeId?: SortOrder
+    decisionNote?: SortOrder
+    decidedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type HrAccessRequestMinOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    state?: SortOrder
+    proposedName?: SortOrder
+    proposedEmail?: SortOrder
+    proposedPosition?: SortOrder
+    proposedPhone?: SortOrder
+    targetEmployeeId?: SortOrder
+    makerEmployeeId?: SortOrder
+    checkerEmployeeId?: SortOrder
+    decisionNote?: SortOrder
+    decidedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumHrAccessRequestTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.HrAccessRequestType | EnumHrAccessRequestTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.HrAccessRequestType[] | ListEnumHrAccessRequestTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.HrAccessRequestType[] | ListEnumHrAccessRequestTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumHrAccessRequestTypeWithAggregatesFilter<$PrismaModel> | $Enums.HrAccessRequestType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumHrAccessRequestTypeFilter<$PrismaModel>
+    _max?: NestedEnumHrAccessRequestTypeFilter<$PrismaModel>
+  }
+
+  export type EnumHrAccessRequestStateWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.HrAccessRequestState | EnumHrAccessRequestStateFieldRefInput<$PrismaModel>
+    in?: $Enums.HrAccessRequestState[] | ListEnumHrAccessRequestStateFieldRefInput<$PrismaModel>
+    notIn?: $Enums.HrAccessRequestState[] | ListEnumHrAccessRequestStateFieldRefInput<$PrismaModel>
+    not?: NestedEnumHrAccessRequestStateWithAggregatesFilter<$PrismaModel> | $Enums.HrAccessRequestState
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumHrAccessRequestStateFilter<$PrismaModel>
+    _max?: NestedEnumHrAccessRequestStateFilter<$PrismaModel>
+  }
+
   export type AttendanceSessionCreateNestedManyWithoutEmployeeInput = {
     create?: XOR<AttendanceSessionCreateWithoutEmployeeInput, AttendanceSessionUncheckedCreateWithoutEmployeeInput> | AttendanceSessionCreateWithoutEmployeeInput[] | AttendanceSessionUncheckedCreateWithoutEmployeeInput[]
     connectOrCreate?: AttendanceSessionCreateOrConnectWithoutEmployeeInput | AttendanceSessionCreateOrConnectWithoutEmployeeInput[]
@@ -5669,6 +7533,27 @@ export namespace Prisma {
     connect?: ProfileChangeEventWhereUniqueInput | ProfileChangeEventWhereUniqueInput[]
   }
 
+  export type HrAccessRequestCreateNestedManyWithoutMakerInput = {
+    create?: XOR<HrAccessRequestCreateWithoutMakerInput, HrAccessRequestUncheckedCreateWithoutMakerInput> | HrAccessRequestCreateWithoutMakerInput[] | HrAccessRequestUncheckedCreateWithoutMakerInput[]
+    connectOrCreate?: HrAccessRequestCreateOrConnectWithoutMakerInput | HrAccessRequestCreateOrConnectWithoutMakerInput[]
+    createMany?: HrAccessRequestCreateManyMakerInputEnvelope
+    connect?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+  }
+
+  export type HrAccessRequestCreateNestedManyWithoutCheckerInput = {
+    create?: XOR<HrAccessRequestCreateWithoutCheckerInput, HrAccessRequestUncheckedCreateWithoutCheckerInput> | HrAccessRequestCreateWithoutCheckerInput[] | HrAccessRequestUncheckedCreateWithoutCheckerInput[]
+    connectOrCreate?: HrAccessRequestCreateOrConnectWithoutCheckerInput | HrAccessRequestCreateOrConnectWithoutCheckerInput[]
+    createMany?: HrAccessRequestCreateManyCheckerInputEnvelope
+    connect?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+  }
+
+  export type HrAccessRequestCreateNestedManyWithoutTargetInput = {
+    create?: XOR<HrAccessRequestCreateWithoutTargetInput, HrAccessRequestUncheckedCreateWithoutTargetInput> | HrAccessRequestCreateWithoutTargetInput[] | HrAccessRequestUncheckedCreateWithoutTargetInput[]
+    connectOrCreate?: HrAccessRequestCreateOrConnectWithoutTargetInput | HrAccessRequestCreateOrConnectWithoutTargetInput[]
+    createMany?: HrAccessRequestCreateManyTargetInputEnvelope
+    connect?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+  }
+
   export type AttendanceSessionUncheckedCreateNestedManyWithoutEmployeeInput = {
     create?: XOR<AttendanceSessionCreateWithoutEmployeeInput, AttendanceSessionUncheckedCreateWithoutEmployeeInput> | AttendanceSessionCreateWithoutEmployeeInput[] | AttendanceSessionUncheckedCreateWithoutEmployeeInput[]
     connectOrCreate?: AttendanceSessionCreateOrConnectWithoutEmployeeInput | AttendanceSessionCreateOrConnectWithoutEmployeeInput[]
@@ -5681,6 +7566,27 @@ export namespace Prisma {
     connectOrCreate?: ProfileChangeEventCreateOrConnectWithoutEmployeeInput | ProfileChangeEventCreateOrConnectWithoutEmployeeInput[]
     createMany?: ProfileChangeEventCreateManyEmployeeInputEnvelope
     connect?: ProfileChangeEventWhereUniqueInput | ProfileChangeEventWhereUniqueInput[]
+  }
+
+  export type HrAccessRequestUncheckedCreateNestedManyWithoutMakerInput = {
+    create?: XOR<HrAccessRequestCreateWithoutMakerInput, HrAccessRequestUncheckedCreateWithoutMakerInput> | HrAccessRequestCreateWithoutMakerInput[] | HrAccessRequestUncheckedCreateWithoutMakerInput[]
+    connectOrCreate?: HrAccessRequestCreateOrConnectWithoutMakerInput | HrAccessRequestCreateOrConnectWithoutMakerInput[]
+    createMany?: HrAccessRequestCreateManyMakerInputEnvelope
+    connect?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+  }
+
+  export type HrAccessRequestUncheckedCreateNestedManyWithoutCheckerInput = {
+    create?: XOR<HrAccessRequestCreateWithoutCheckerInput, HrAccessRequestUncheckedCreateWithoutCheckerInput> | HrAccessRequestCreateWithoutCheckerInput[] | HrAccessRequestUncheckedCreateWithoutCheckerInput[]
+    connectOrCreate?: HrAccessRequestCreateOrConnectWithoutCheckerInput | HrAccessRequestCreateOrConnectWithoutCheckerInput[]
+    createMany?: HrAccessRequestCreateManyCheckerInputEnvelope
+    connect?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+  }
+
+  export type HrAccessRequestUncheckedCreateNestedManyWithoutTargetInput = {
+    create?: XOR<HrAccessRequestCreateWithoutTargetInput, HrAccessRequestUncheckedCreateWithoutTargetInput> | HrAccessRequestCreateWithoutTargetInput[] | HrAccessRequestUncheckedCreateWithoutTargetInput[]
+    connectOrCreate?: HrAccessRequestCreateOrConnectWithoutTargetInput | HrAccessRequestCreateOrConnectWithoutTargetInput[]
+    createMany?: HrAccessRequestCreateManyTargetInputEnvelope
+    connect?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -5735,6 +7641,48 @@ export namespace Prisma {
     deleteMany?: ProfileChangeEventScalarWhereInput | ProfileChangeEventScalarWhereInput[]
   }
 
+  export type HrAccessRequestUpdateManyWithoutMakerNestedInput = {
+    create?: XOR<HrAccessRequestCreateWithoutMakerInput, HrAccessRequestUncheckedCreateWithoutMakerInput> | HrAccessRequestCreateWithoutMakerInput[] | HrAccessRequestUncheckedCreateWithoutMakerInput[]
+    connectOrCreate?: HrAccessRequestCreateOrConnectWithoutMakerInput | HrAccessRequestCreateOrConnectWithoutMakerInput[]
+    upsert?: HrAccessRequestUpsertWithWhereUniqueWithoutMakerInput | HrAccessRequestUpsertWithWhereUniqueWithoutMakerInput[]
+    createMany?: HrAccessRequestCreateManyMakerInputEnvelope
+    set?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    disconnect?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    delete?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    connect?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    update?: HrAccessRequestUpdateWithWhereUniqueWithoutMakerInput | HrAccessRequestUpdateWithWhereUniqueWithoutMakerInput[]
+    updateMany?: HrAccessRequestUpdateManyWithWhereWithoutMakerInput | HrAccessRequestUpdateManyWithWhereWithoutMakerInput[]
+    deleteMany?: HrAccessRequestScalarWhereInput | HrAccessRequestScalarWhereInput[]
+  }
+
+  export type HrAccessRequestUpdateManyWithoutCheckerNestedInput = {
+    create?: XOR<HrAccessRequestCreateWithoutCheckerInput, HrAccessRequestUncheckedCreateWithoutCheckerInput> | HrAccessRequestCreateWithoutCheckerInput[] | HrAccessRequestUncheckedCreateWithoutCheckerInput[]
+    connectOrCreate?: HrAccessRequestCreateOrConnectWithoutCheckerInput | HrAccessRequestCreateOrConnectWithoutCheckerInput[]
+    upsert?: HrAccessRequestUpsertWithWhereUniqueWithoutCheckerInput | HrAccessRequestUpsertWithWhereUniqueWithoutCheckerInput[]
+    createMany?: HrAccessRequestCreateManyCheckerInputEnvelope
+    set?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    disconnect?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    delete?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    connect?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    update?: HrAccessRequestUpdateWithWhereUniqueWithoutCheckerInput | HrAccessRequestUpdateWithWhereUniqueWithoutCheckerInput[]
+    updateMany?: HrAccessRequestUpdateManyWithWhereWithoutCheckerInput | HrAccessRequestUpdateManyWithWhereWithoutCheckerInput[]
+    deleteMany?: HrAccessRequestScalarWhereInput | HrAccessRequestScalarWhereInput[]
+  }
+
+  export type HrAccessRequestUpdateManyWithoutTargetNestedInput = {
+    create?: XOR<HrAccessRequestCreateWithoutTargetInput, HrAccessRequestUncheckedCreateWithoutTargetInput> | HrAccessRequestCreateWithoutTargetInput[] | HrAccessRequestUncheckedCreateWithoutTargetInput[]
+    connectOrCreate?: HrAccessRequestCreateOrConnectWithoutTargetInput | HrAccessRequestCreateOrConnectWithoutTargetInput[]
+    upsert?: HrAccessRequestUpsertWithWhereUniqueWithoutTargetInput | HrAccessRequestUpsertWithWhereUniqueWithoutTargetInput[]
+    createMany?: HrAccessRequestCreateManyTargetInputEnvelope
+    set?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    disconnect?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    delete?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    connect?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    update?: HrAccessRequestUpdateWithWhereUniqueWithoutTargetInput | HrAccessRequestUpdateWithWhereUniqueWithoutTargetInput[]
+    updateMany?: HrAccessRequestUpdateManyWithWhereWithoutTargetInput | HrAccessRequestUpdateManyWithWhereWithoutTargetInput[]
+    deleteMany?: HrAccessRequestScalarWhereInput | HrAccessRequestScalarWhereInput[]
+  }
+
   export type AttendanceSessionUncheckedUpdateManyWithoutEmployeeNestedInput = {
     create?: XOR<AttendanceSessionCreateWithoutEmployeeInput, AttendanceSessionUncheckedCreateWithoutEmployeeInput> | AttendanceSessionCreateWithoutEmployeeInput[] | AttendanceSessionUncheckedCreateWithoutEmployeeInput[]
     connectOrCreate?: AttendanceSessionCreateOrConnectWithoutEmployeeInput | AttendanceSessionCreateOrConnectWithoutEmployeeInput[]
@@ -5761,6 +7709,48 @@ export namespace Prisma {
     update?: ProfileChangeEventUpdateWithWhereUniqueWithoutEmployeeInput | ProfileChangeEventUpdateWithWhereUniqueWithoutEmployeeInput[]
     updateMany?: ProfileChangeEventUpdateManyWithWhereWithoutEmployeeInput | ProfileChangeEventUpdateManyWithWhereWithoutEmployeeInput[]
     deleteMany?: ProfileChangeEventScalarWhereInput | ProfileChangeEventScalarWhereInput[]
+  }
+
+  export type HrAccessRequestUncheckedUpdateManyWithoutMakerNestedInput = {
+    create?: XOR<HrAccessRequestCreateWithoutMakerInput, HrAccessRequestUncheckedCreateWithoutMakerInput> | HrAccessRequestCreateWithoutMakerInput[] | HrAccessRequestUncheckedCreateWithoutMakerInput[]
+    connectOrCreate?: HrAccessRequestCreateOrConnectWithoutMakerInput | HrAccessRequestCreateOrConnectWithoutMakerInput[]
+    upsert?: HrAccessRequestUpsertWithWhereUniqueWithoutMakerInput | HrAccessRequestUpsertWithWhereUniqueWithoutMakerInput[]
+    createMany?: HrAccessRequestCreateManyMakerInputEnvelope
+    set?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    disconnect?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    delete?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    connect?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    update?: HrAccessRequestUpdateWithWhereUniqueWithoutMakerInput | HrAccessRequestUpdateWithWhereUniqueWithoutMakerInput[]
+    updateMany?: HrAccessRequestUpdateManyWithWhereWithoutMakerInput | HrAccessRequestUpdateManyWithWhereWithoutMakerInput[]
+    deleteMany?: HrAccessRequestScalarWhereInput | HrAccessRequestScalarWhereInput[]
+  }
+
+  export type HrAccessRequestUncheckedUpdateManyWithoutCheckerNestedInput = {
+    create?: XOR<HrAccessRequestCreateWithoutCheckerInput, HrAccessRequestUncheckedCreateWithoutCheckerInput> | HrAccessRequestCreateWithoutCheckerInput[] | HrAccessRequestUncheckedCreateWithoutCheckerInput[]
+    connectOrCreate?: HrAccessRequestCreateOrConnectWithoutCheckerInput | HrAccessRequestCreateOrConnectWithoutCheckerInput[]
+    upsert?: HrAccessRequestUpsertWithWhereUniqueWithoutCheckerInput | HrAccessRequestUpsertWithWhereUniqueWithoutCheckerInput[]
+    createMany?: HrAccessRequestCreateManyCheckerInputEnvelope
+    set?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    disconnect?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    delete?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    connect?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    update?: HrAccessRequestUpdateWithWhereUniqueWithoutCheckerInput | HrAccessRequestUpdateWithWhereUniqueWithoutCheckerInput[]
+    updateMany?: HrAccessRequestUpdateManyWithWhereWithoutCheckerInput | HrAccessRequestUpdateManyWithWhereWithoutCheckerInput[]
+    deleteMany?: HrAccessRequestScalarWhereInput | HrAccessRequestScalarWhereInput[]
+  }
+
+  export type HrAccessRequestUncheckedUpdateManyWithoutTargetNestedInput = {
+    create?: XOR<HrAccessRequestCreateWithoutTargetInput, HrAccessRequestUncheckedCreateWithoutTargetInput> | HrAccessRequestCreateWithoutTargetInput[] | HrAccessRequestUncheckedCreateWithoutTargetInput[]
+    connectOrCreate?: HrAccessRequestCreateOrConnectWithoutTargetInput | HrAccessRequestCreateOrConnectWithoutTargetInput[]
+    upsert?: HrAccessRequestUpsertWithWhereUniqueWithoutTargetInput | HrAccessRequestUpsertWithWhereUniqueWithoutTargetInput[]
+    createMany?: HrAccessRequestCreateManyTargetInputEnvelope
+    set?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    disconnect?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    delete?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    connect?: HrAccessRequestWhereUniqueInput | HrAccessRequestWhereUniqueInput[]
+    update?: HrAccessRequestUpdateWithWhereUniqueWithoutTargetInput | HrAccessRequestUpdateWithWhereUniqueWithoutTargetInput[]
+    updateMany?: HrAccessRequestUpdateManyWithWhereWithoutTargetInput | HrAccessRequestUpdateManyWithWhereWithoutTargetInput[]
+    deleteMany?: HrAccessRequestScalarWhereInput | HrAccessRequestScalarWhereInput[]
   }
 
   export type EmployeeCreateNestedOneWithoutAttendanceSessionsInput = {
@@ -5802,6 +7792,60 @@ export namespace Prisma {
     upsert?: EmployeeUpsertWithoutProfileChangeEventsInput
     connect?: EmployeeWhereUniqueInput
     update?: XOR<XOR<EmployeeUpdateToOneWithWhereWithoutProfileChangeEventsInput, EmployeeUpdateWithoutProfileChangeEventsInput>, EmployeeUncheckedUpdateWithoutProfileChangeEventsInput>
+  }
+
+  export type EmployeeCreateNestedOneWithoutHrAccessRequestsMadeInput = {
+    create?: XOR<EmployeeCreateWithoutHrAccessRequestsMadeInput, EmployeeUncheckedCreateWithoutHrAccessRequestsMadeInput>
+    connectOrCreate?: EmployeeCreateOrConnectWithoutHrAccessRequestsMadeInput
+    connect?: EmployeeWhereUniqueInput
+  }
+
+  export type EmployeeCreateNestedOneWithoutHrAccessRequestsCheckedInput = {
+    create?: XOR<EmployeeCreateWithoutHrAccessRequestsCheckedInput, EmployeeUncheckedCreateWithoutHrAccessRequestsCheckedInput>
+    connectOrCreate?: EmployeeCreateOrConnectWithoutHrAccessRequestsCheckedInput
+    connect?: EmployeeWhereUniqueInput
+  }
+
+  export type EmployeeCreateNestedOneWithoutHrAccessRequestsTargetedInput = {
+    create?: XOR<EmployeeCreateWithoutHrAccessRequestsTargetedInput, EmployeeUncheckedCreateWithoutHrAccessRequestsTargetedInput>
+    connectOrCreate?: EmployeeCreateOrConnectWithoutHrAccessRequestsTargetedInput
+    connect?: EmployeeWhereUniqueInput
+  }
+
+  export type EnumHrAccessRequestTypeFieldUpdateOperationsInput = {
+    set?: $Enums.HrAccessRequestType
+  }
+
+  export type EnumHrAccessRequestStateFieldUpdateOperationsInput = {
+    set?: $Enums.HrAccessRequestState
+  }
+
+  export type EmployeeUpdateOneRequiredWithoutHrAccessRequestsMadeNestedInput = {
+    create?: XOR<EmployeeCreateWithoutHrAccessRequestsMadeInput, EmployeeUncheckedCreateWithoutHrAccessRequestsMadeInput>
+    connectOrCreate?: EmployeeCreateOrConnectWithoutHrAccessRequestsMadeInput
+    upsert?: EmployeeUpsertWithoutHrAccessRequestsMadeInput
+    connect?: EmployeeWhereUniqueInput
+    update?: XOR<XOR<EmployeeUpdateToOneWithWhereWithoutHrAccessRequestsMadeInput, EmployeeUpdateWithoutHrAccessRequestsMadeInput>, EmployeeUncheckedUpdateWithoutHrAccessRequestsMadeInput>
+  }
+
+  export type EmployeeUpdateOneWithoutHrAccessRequestsCheckedNestedInput = {
+    create?: XOR<EmployeeCreateWithoutHrAccessRequestsCheckedInput, EmployeeUncheckedCreateWithoutHrAccessRequestsCheckedInput>
+    connectOrCreate?: EmployeeCreateOrConnectWithoutHrAccessRequestsCheckedInput
+    upsert?: EmployeeUpsertWithoutHrAccessRequestsCheckedInput
+    disconnect?: EmployeeWhereInput | boolean
+    delete?: EmployeeWhereInput | boolean
+    connect?: EmployeeWhereUniqueInput
+    update?: XOR<XOR<EmployeeUpdateToOneWithWhereWithoutHrAccessRequestsCheckedInput, EmployeeUpdateWithoutHrAccessRequestsCheckedInput>, EmployeeUncheckedUpdateWithoutHrAccessRequestsCheckedInput>
+  }
+
+  export type EmployeeUpdateOneWithoutHrAccessRequestsTargetedNestedInput = {
+    create?: XOR<EmployeeCreateWithoutHrAccessRequestsTargetedInput, EmployeeUncheckedCreateWithoutHrAccessRequestsTargetedInput>
+    connectOrCreate?: EmployeeCreateOrConnectWithoutHrAccessRequestsTargetedInput
+    upsert?: EmployeeUpsertWithoutHrAccessRequestsTargetedInput
+    disconnect?: EmployeeWhereInput | boolean
+    delete?: EmployeeWhereInput | boolean
+    connect?: EmployeeWhereUniqueInput
+    update?: XOR<XOR<EmployeeUpdateToOneWithWhereWithoutHrAccessRequestsTargetedInput, EmployeeUpdateWithoutHrAccessRequestsTargetedInput>, EmployeeUncheckedUpdateWithoutHrAccessRequestsTargetedInput>
   }
 
   export type NestedUuidFilter<$PrismaModel = never> = {
@@ -6058,6 +8102,40 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
+  export type NestedEnumHrAccessRequestTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.HrAccessRequestType | EnumHrAccessRequestTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.HrAccessRequestType[] | ListEnumHrAccessRequestTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.HrAccessRequestType[] | ListEnumHrAccessRequestTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumHrAccessRequestTypeFilter<$PrismaModel> | $Enums.HrAccessRequestType
+  }
+
+  export type NestedEnumHrAccessRequestStateFilter<$PrismaModel = never> = {
+    equals?: $Enums.HrAccessRequestState | EnumHrAccessRequestStateFieldRefInput<$PrismaModel>
+    in?: $Enums.HrAccessRequestState[] | ListEnumHrAccessRequestStateFieldRefInput<$PrismaModel>
+    notIn?: $Enums.HrAccessRequestState[] | ListEnumHrAccessRequestStateFieldRefInput<$PrismaModel>
+    not?: NestedEnumHrAccessRequestStateFilter<$PrismaModel> | $Enums.HrAccessRequestState
+  }
+
+  export type NestedEnumHrAccessRequestTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.HrAccessRequestType | EnumHrAccessRequestTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.HrAccessRequestType[] | ListEnumHrAccessRequestTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.HrAccessRequestType[] | ListEnumHrAccessRequestTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumHrAccessRequestTypeWithAggregatesFilter<$PrismaModel> | $Enums.HrAccessRequestType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumHrAccessRequestTypeFilter<$PrismaModel>
+    _max?: NestedEnumHrAccessRequestTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumHrAccessRequestStateWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.HrAccessRequestState | EnumHrAccessRequestStateFieldRefInput<$PrismaModel>
+    in?: $Enums.HrAccessRequestState[] | ListEnumHrAccessRequestStateFieldRefInput<$PrismaModel>
+    notIn?: $Enums.HrAccessRequestState[] | ListEnumHrAccessRequestStateFieldRefInput<$PrismaModel>
+    not?: NestedEnumHrAccessRequestStateWithAggregatesFilter<$PrismaModel> | $Enums.HrAccessRequestState
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumHrAccessRequestStateFilter<$PrismaModel>
+    _max?: NestedEnumHrAccessRequestStateFilter<$PrismaModel>
+  }
+
   export type AttendanceSessionCreateWithoutEmployeeInput = {
     id?: string
     workDate: Date | string
@@ -6117,6 +8195,132 @@ export namespace Prisma {
 
   export type ProfileChangeEventCreateManyEmployeeInputEnvelope = {
     data: ProfileChangeEventCreateManyEmployeeInput | ProfileChangeEventCreateManyEmployeeInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type HrAccessRequestCreateWithoutMakerInput = {
+    id?: string
+    type: $Enums.HrAccessRequestType
+    state?: $Enums.HrAccessRequestState
+    proposedName?: string | null
+    proposedEmail?: string | null
+    proposedPosition?: string | null
+    proposedPhone?: string | null
+    decisionNote?: string | null
+    decidedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    checker?: EmployeeCreateNestedOneWithoutHrAccessRequestsCheckedInput
+    target?: EmployeeCreateNestedOneWithoutHrAccessRequestsTargetedInput
+  }
+
+  export type HrAccessRequestUncheckedCreateWithoutMakerInput = {
+    id?: string
+    type: $Enums.HrAccessRequestType
+    state?: $Enums.HrAccessRequestState
+    proposedName?: string | null
+    proposedEmail?: string | null
+    proposedPosition?: string | null
+    proposedPhone?: string | null
+    targetEmployeeId?: string | null
+    checkerEmployeeId?: string | null
+    decisionNote?: string | null
+    decidedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type HrAccessRequestCreateOrConnectWithoutMakerInput = {
+    where: HrAccessRequestWhereUniqueInput
+    create: XOR<HrAccessRequestCreateWithoutMakerInput, HrAccessRequestUncheckedCreateWithoutMakerInput>
+  }
+
+  export type HrAccessRequestCreateManyMakerInputEnvelope = {
+    data: HrAccessRequestCreateManyMakerInput | HrAccessRequestCreateManyMakerInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type HrAccessRequestCreateWithoutCheckerInput = {
+    id?: string
+    type: $Enums.HrAccessRequestType
+    state?: $Enums.HrAccessRequestState
+    proposedName?: string | null
+    proposedEmail?: string | null
+    proposedPosition?: string | null
+    proposedPhone?: string | null
+    decisionNote?: string | null
+    decidedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    maker: EmployeeCreateNestedOneWithoutHrAccessRequestsMadeInput
+    target?: EmployeeCreateNestedOneWithoutHrAccessRequestsTargetedInput
+  }
+
+  export type HrAccessRequestUncheckedCreateWithoutCheckerInput = {
+    id?: string
+    type: $Enums.HrAccessRequestType
+    state?: $Enums.HrAccessRequestState
+    proposedName?: string | null
+    proposedEmail?: string | null
+    proposedPosition?: string | null
+    proposedPhone?: string | null
+    targetEmployeeId?: string | null
+    makerEmployeeId: string
+    decisionNote?: string | null
+    decidedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type HrAccessRequestCreateOrConnectWithoutCheckerInput = {
+    where: HrAccessRequestWhereUniqueInput
+    create: XOR<HrAccessRequestCreateWithoutCheckerInput, HrAccessRequestUncheckedCreateWithoutCheckerInput>
+  }
+
+  export type HrAccessRequestCreateManyCheckerInputEnvelope = {
+    data: HrAccessRequestCreateManyCheckerInput | HrAccessRequestCreateManyCheckerInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type HrAccessRequestCreateWithoutTargetInput = {
+    id?: string
+    type: $Enums.HrAccessRequestType
+    state?: $Enums.HrAccessRequestState
+    proposedName?: string | null
+    proposedEmail?: string | null
+    proposedPosition?: string | null
+    proposedPhone?: string | null
+    decisionNote?: string | null
+    decidedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    maker: EmployeeCreateNestedOneWithoutHrAccessRequestsMadeInput
+    checker?: EmployeeCreateNestedOneWithoutHrAccessRequestsCheckedInput
+  }
+
+  export type HrAccessRequestUncheckedCreateWithoutTargetInput = {
+    id?: string
+    type: $Enums.HrAccessRequestType
+    state?: $Enums.HrAccessRequestState
+    proposedName?: string | null
+    proposedEmail?: string | null
+    proposedPosition?: string | null
+    proposedPhone?: string | null
+    makerEmployeeId: string
+    checkerEmployeeId?: string | null
+    decisionNote?: string | null
+    decidedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type HrAccessRequestCreateOrConnectWithoutTargetInput = {
+    where: HrAccessRequestWhereUniqueInput
+    create: XOR<HrAccessRequestCreateWithoutTargetInput, HrAccessRequestUncheckedCreateWithoutTargetInput>
+  }
+
+  export type HrAccessRequestCreateManyTargetInputEnvelope = {
+    data: HrAccessRequestCreateManyTargetInput | HrAccessRequestCreateManyTargetInput[]
     skipDuplicates?: boolean
   }
 
@@ -6181,6 +8385,74 @@ export namespace Prisma {
     publishedAt?: DateTimeNullableFilter<"ProfileChangeEvent"> | Date | string | null
   }
 
+  export type HrAccessRequestUpsertWithWhereUniqueWithoutMakerInput = {
+    where: HrAccessRequestWhereUniqueInput
+    update: XOR<HrAccessRequestUpdateWithoutMakerInput, HrAccessRequestUncheckedUpdateWithoutMakerInput>
+    create: XOR<HrAccessRequestCreateWithoutMakerInput, HrAccessRequestUncheckedCreateWithoutMakerInput>
+  }
+
+  export type HrAccessRequestUpdateWithWhereUniqueWithoutMakerInput = {
+    where: HrAccessRequestWhereUniqueInput
+    data: XOR<HrAccessRequestUpdateWithoutMakerInput, HrAccessRequestUncheckedUpdateWithoutMakerInput>
+  }
+
+  export type HrAccessRequestUpdateManyWithWhereWithoutMakerInput = {
+    where: HrAccessRequestScalarWhereInput
+    data: XOR<HrAccessRequestUpdateManyMutationInput, HrAccessRequestUncheckedUpdateManyWithoutMakerInput>
+  }
+
+  export type HrAccessRequestScalarWhereInput = {
+    AND?: HrAccessRequestScalarWhereInput | HrAccessRequestScalarWhereInput[]
+    OR?: HrAccessRequestScalarWhereInput[]
+    NOT?: HrAccessRequestScalarWhereInput | HrAccessRequestScalarWhereInput[]
+    id?: UuidFilter<"HrAccessRequest"> | string
+    type?: EnumHrAccessRequestTypeFilter<"HrAccessRequest"> | $Enums.HrAccessRequestType
+    state?: EnumHrAccessRequestStateFilter<"HrAccessRequest"> | $Enums.HrAccessRequestState
+    proposedName?: StringNullableFilter<"HrAccessRequest"> | string | null
+    proposedEmail?: StringNullableFilter<"HrAccessRequest"> | string | null
+    proposedPosition?: StringNullableFilter<"HrAccessRequest"> | string | null
+    proposedPhone?: StringNullableFilter<"HrAccessRequest"> | string | null
+    targetEmployeeId?: UuidNullableFilter<"HrAccessRequest"> | string | null
+    makerEmployeeId?: UuidFilter<"HrAccessRequest"> | string
+    checkerEmployeeId?: UuidNullableFilter<"HrAccessRequest"> | string | null
+    decisionNote?: StringNullableFilter<"HrAccessRequest"> | string | null
+    decidedAt?: DateTimeNullableFilter<"HrAccessRequest"> | Date | string | null
+    createdAt?: DateTimeFilter<"HrAccessRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"HrAccessRequest"> | Date | string
+  }
+
+  export type HrAccessRequestUpsertWithWhereUniqueWithoutCheckerInput = {
+    where: HrAccessRequestWhereUniqueInput
+    update: XOR<HrAccessRequestUpdateWithoutCheckerInput, HrAccessRequestUncheckedUpdateWithoutCheckerInput>
+    create: XOR<HrAccessRequestCreateWithoutCheckerInput, HrAccessRequestUncheckedCreateWithoutCheckerInput>
+  }
+
+  export type HrAccessRequestUpdateWithWhereUniqueWithoutCheckerInput = {
+    where: HrAccessRequestWhereUniqueInput
+    data: XOR<HrAccessRequestUpdateWithoutCheckerInput, HrAccessRequestUncheckedUpdateWithoutCheckerInput>
+  }
+
+  export type HrAccessRequestUpdateManyWithWhereWithoutCheckerInput = {
+    where: HrAccessRequestScalarWhereInput
+    data: XOR<HrAccessRequestUpdateManyMutationInput, HrAccessRequestUncheckedUpdateManyWithoutCheckerInput>
+  }
+
+  export type HrAccessRequestUpsertWithWhereUniqueWithoutTargetInput = {
+    where: HrAccessRequestWhereUniqueInput
+    update: XOR<HrAccessRequestUpdateWithoutTargetInput, HrAccessRequestUncheckedUpdateWithoutTargetInput>
+    create: XOR<HrAccessRequestCreateWithoutTargetInput, HrAccessRequestUncheckedCreateWithoutTargetInput>
+  }
+
+  export type HrAccessRequestUpdateWithWhereUniqueWithoutTargetInput = {
+    where: HrAccessRequestWhereUniqueInput
+    data: XOR<HrAccessRequestUpdateWithoutTargetInput, HrAccessRequestUncheckedUpdateWithoutTargetInput>
+  }
+
+  export type HrAccessRequestUpdateManyWithWhereWithoutTargetInput = {
+    where: HrAccessRequestScalarWhereInput
+    data: XOR<HrAccessRequestUpdateManyMutationInput, HrAccessRequestUncheckedUpdateManyWithoutTargetInput>
+  }
+
   export type EmployeeCreateWithoutAttendanceSessionsInput = {
     id?: string
     name: string
@@ -6196,6 +8468,9 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     profileChangeEvents?: ProfileChangeEventCreateNestedManyWithoutEmployeeInput
+    hrAccessRequestsMade?: HrAccessRequestCreateNestedManyWithoutMakerInput
+    hrAccessRequestsChecked?: HrAccessRequestCreateNestedManyWithoutCheckerInput
+    hrAccessRequestsTargeted?: HrAccessRequestCreateNestedManyWithoutTargetInput
   }
 
   export type EmployeeUncheckedCreateWithoutAttendanceSessionsInput = {
@@ -6213,6 +8488,9 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     profileChangeEvents?: ProfileChangeEventUncheckedCreateNestedManyWithoutEmployeeInput
+    hrAccessRequestsMade?: HrAccessRequestUncheckedCreateNestedManyWithoutMakerInput
+    hrAccessRequestsChecked?: HrAccessRequestUncheckedCreateNestedManyWithoutCheckerInput
+    hrAccessRequestsTargeted?: HrAccessRequestUncheckedCreateNestedManyWithoutTargetInput
   }
 
   export type EmployeeCreateOrConnectWithoutAttendanceSessionsInput = {
@@ -6246,6 +8524,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profileChangeEvents?: ProfileChangeEventUpdateManyWithoutEmployeeNestedInput
+    hrAccessRequestsMade?: HrAccessRequestUpdateManyWithoutMakerNestedInput
+    hrAccessRequestsChecked?: HrAccessRequestUpdateManyWithoutCheckerNestedInput
+    hrAccessRequestsTargeted?: HrAccessRequestUpdateManyWithoutTargetNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutAttendanceSessionsInput = {
@@ -6263,6 +8544,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profileChangeEvents?: ProfileChangeEventUncheckedUpdateManyWithoutEmployeeNestedInput
+    hrAccessRequestsMade?: HrAccessRequestUncheckedUpdateManyWithoutMakerNestedInput
+    hrAccessRequestsChecked?: HrAccessRequestUncheckedUpdateManyWithoutCheckerNestedInput
+    hrAccessRequestsTargeted?: HrAccessRequestUncheckedUpdateManyWithoutTargetNestedInput
   }
 
   export type EmployeeCreateWithoutProfileChangeEventsInput = {
@@ -6280,6 +8564,9 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     attendanceSessions?: AttendanceSessionCreateNestedManyWithoutEmployeeInput
+    hrAccessRequestsMade?: HrAccessRequestCreateNestedManyWithoutMakerInput
+    hrAccessRequestsChecked?: HrAccessRequestCreateNestedManyWithoutCheckerInput
+    hrAccessRequestsTargeted?: HrAccessRequestCreateNestedManyWithoutTargetInput
   }
 
   export type EmployeeUncheckedCreateWithoutProfileChangeEventsInput = {
@@ -6297,6 +8584,9 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     attendanceSessions?: AttendanceSessionUncheckedCreateNestedManyWithoutEmployeeInput
+    hrAccessRequestsMade?: HrAccessRequestUncheckedCreateNestedManyWithoutMakerInput
+    hrAccessRequestsChecked?: HrAccessRequestUncheckedCreateNestedManyWithoutCheckerInput
+    hrAccessRequestsTargeted?: HrAccessRequestUncheckedCreateNestedManyWithoutTargetInput
   }
 
   export type EmployeeCreateOrConnectWithoutProfileChangeEventsInput = {
@@ -6330,6 +8620,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attendanceSessions?: AttendanceSessionUpdateManyWithoutEmployeeNestedInput
+    hrAccessRequestsMade?: HrAccessRequestUpdateManyWithoutMakerNestedInput
+    hrAccessRequestsChecked?: HrAccessRequestUpdateManyWithoutCheckerNestedInput
+    hrAccessRequestsTargeted?: HrAccessRequestUpdateManyWithoutTargetNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutProfileChangeEventsInput = {
@@ -6347,6 +8640,297 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attendanceSessions?: AttendanceSessionUncheckedUpdateManyWithoutEmployeeNestedInput
+    hrAccessRequestsMade?: HrAccessRequestUncheckedUpdateManyWithoutMakerNestedInput
+    hrAccessRequestsChecked?: HrAccessRequestUncheckedUpdateManyWithoutCheckerNestedInput
+    hrAccessRequestsTargeted?: HrAccessRequestUncheckedUpdateManyWithoutTargetNestedInput
+  }
+
+  export type EmployeeCreateWithoutHrAccessRequestsMadeInput = {
+    id?: string
+    name: string
+    email: string
+    position: string
+    phone: string
+    photoObjectKey?: string | null
+    status?: $Enums.EmployeeStatus
+    role: $Enums.EmployeeRole
+    passwordHash: string
+    mustChangePassword?: boolean
+    authProvider?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    attendanceSessions?: AttendanceSessionCreateNestedManyWithoutEmployeeInput
+    profileChangeEvents?: ProfileChangeEventCreateNestedManyWithoutEmployeeInput
+    hrAccessRequestsChecked?: HrAccessRequestCreateNestedManyWithoutCheckerInput
+    hrAccessRequestsTargeted?: HrAccessRequestCreateNestedManyWithoutTargetInput
+  }
+
+  export type EmployeeUncheckedCreateWithoutHrAccessRequestsMadeInput = {
+    id?: string
+    name: string
+    email: string
+    position: string
+    phone: string
+    photoObjectKey?: string | null
+    status?: $Enums.EmployeeStatus
+    role: $Enums.EmployeeRole
+    passwordHash: string
+    mustChangePassword?: boolean
+    authProvider?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    attendanceSessions?: AttendanceSessionUncheckedCreateNestedManyWithoutEmployeeInput
+    profileChangeEvents?: ProfileChangeEventUncheckedCreateNestedManyWithoutEmployeeInput
+    hrAccessRequestsChecked?: HrAccessRequestUncheckedCreateNestedManyWithoutCheckerInput
+    hrAccessRequestsTargeted?: HrAccessRequestUncheckedCreateNestedManyWithoutTargetInput
+  }
+
+  export type EmployeeCreateOrConnectWithoutHrAccessRequestsMadeInput = {
+    where: EmployeeWhereUniqueInput
+    create: XOR<EmployeeCreateWithoutHrAccessRequestsMadeInput, EmployeeUncheckedCreateWithoutHrAccessRequestsMadeInput>
+  }
+
+  export type EmployeeCreateWithoutHrAccessRequestsCheckedInput = {
+    id?: string
+    name: string
+    email: string
+    position: string
+    phone: string
+    photoObjectKey?: string | null
+    status?: $Enums.EmployeeStatus
+    role: $Enums.EmployeeRole
+    passwordHash: string
+    mustChangePassword?: boolean
+    authProvider?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    attendanceSessions?: AttendanceSessionCreateNestedManyWithoutEmployeeInput
+    profileChangeEvents?: ProfileChangeEventCreateNestedManyWithoutEmployeeInput
+    hrAccessRequestsMade?: HrAccessRequestCreateNestedManyWithoutMakerInput
+    hrAccessRequestsTargeted?: HrAccessRequestCreateNestedManyWithoutTargetInput
+  }
+
+  export type EmployeeUncheckedCreateWithoutHrAccessRequestsCheckedInput = {
+    id?: string
+    name: string
+    email: string
+    position: string
+    phone: string
+    photoObjectKey?: string | null
+    status?: $Enums.EmployeeStatus
+    role: $Enums.EmployeeRole
+    passwordHash: string
+    mustChangePassword?: boolean
+    authProvider?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    attendanceSessions?: AttendanceSessionUncheckedCreateNestedManyWithoutEmployeeInput
+    profileChangeEvents?: ProfileChangeEventUncheckedCreateNestedManyWithoutEmployeeInput
+    hrAccessRequestsMade?: HrAccessRequestUncheckedCreateNestedManyWithoutMakerInput
+    hrAccessRequestsTargeted?: HrAccessRequestUncheckedCreateNestedManyWithoutTargetInput
+  }
+
+  export type EmployeeCreateOrConnectWithoutHrAccessRequestsCheckedInput = {
+    where: EmployeeWhereUniqueInput
+    create: XOR<EmployeeCreateWithoutHrAccessRequestsCheckedInput, EmployeeUncheckedCreateWithoutHrAccessRequestsCheckedInput>
+  }
+
+  export type EmployeeCreateWithoutHrAccessRequestsTargetedInput = {
+    id?: string
+    name: string
+    email: string
+    position: string
+    phone: string
+    photoObjectKey?: string | null
+    status?: $Enums.EmployeeStatus
+    role: $Enums.EmployeeRole
+    passwordHash: string
+    mustChangePassword?: boolean
+    authProvider?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    attendanceSessions?: AttendanceSessionCreateNestedManyWithoutEmployeeInput
+    profileChangeEvents?: ProfileChangeEventCreateNestedManyWithoutEmployeeInput
+    hrAccessRequestsMade?: HrAccessRequestCreateNestedManyWithoutMakerInput
+    hrAccessRequestsChecked?: HrAccessRequestCreateNestedManyWithoutCheckerInput
+  }
+
+  export type EmployeeUncheckedCreateWithoutHrAccessRequestsTargetedInput = {
+    id?: string
+    name: string
+    email: string
+    position: string
+    phone: string
+    photoObjectKey?: string | null
+    status?: $Enums.EmployeeStatus
+    role: $Enums.EmployeeRole
+    passwordHash: string
+    mustChangePassword?: boolean
+    authProvider?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    attendanceSessions?: AttendanceSessionUncheckedCreateNestedManyWithoutEmployeeInput
+    profileChangeEvents?: ProfileChangeEventUncheckedCreateNestedManyWithoutEmployeeInput
+    hrAccessRequestsMade?: HrAccessRequestUncheckedCreateNestedManyWithoutMakerInput
+    hrAccessRequestsChecked?: HrAccessRequestUncheckedCreateNestedManyWithoutCheckerInput
+  }
+
+  export type EmployeeCreateOrConnectWithoutHrAccessRequestsTargetedInput = {
+    where: EmployeeWhereUniqueInput
+    create: XOR<EmployeeCreateWithoutHrAccessRequestsTargetedInput, EmployeeUncheckedCreateWithoutHrAccessRequestsTargetedInput>
+  }
+
+  export type EmployeeUpsertWithoutHrAccessRequestsMadeInput = {
+    update: XOR<EmployeeUpdateWithoutHrAccessRequestsMadeInput, EmployeeUncheckedUpdateWithoutHrAccessRequestsMadeInput>
+    create: XOR<EmployeeCreateWithoutHrAccessRequestsMadeInput, EmployeeUncheckedCreateWithoutHrAccessRequestsMadeInput>
+    where?: EmployeeWhereInput
+  }
+
+  export type EmployeeUpdateToOneWithWhereWithoutHrAccessRequestsMadeInput = {
+    where?: EmployeeWhereInput
+    data: XOR<EmployeeUpdateWithoutHrAccessRequestsMadeInput, EmployeeUncheckedUpdateWithoutHrAccessRequestsMadeInput>
+  }
+
+  export type EmployeeUpdateWithoutHrAccessRequestsMadeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    position?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    photoObjectKey?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+    role?: EnumEmployeeRoleFieldUpdateOperationsInput | $Enums.EmployeeRole
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    authProvider?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attendanceSessions?: AttendanceSessionUpdateManyWithoutEmployeeNestedInput
+    profileChangeEvents?: ProfileChangeEventUpdateManyWithoutEmployeeNestedInput
+    hrAccessRequestsChecked?: HrAccessRequestUpdateManyWithoutCheckerNestedInput
+    hrAccessRequestsTargeted?: HrAccessRequestUpdateManyWithoutTargetNestedInput
+  }
+
+  export type EmployeeUncheckedUpdateWithoutHrAccessRequestsMadeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    position?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    photoObjectKey?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+    role?: EnumEmployeeRoleFieldUpdateOperationsInput | $Enums.EmployeeRole
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    authProvider?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attendanceSessions?: AttendanceSessionUncheckedUpdateManyWithoutEmployeeNestedInput
+    profileChangeEvents?: ProfileChangeEventUncheckedUpdateManyWithoutEmployeeNestedInput
+    hrAccessRequestsChecked?: HrAccessRequestUncheckedUpdateManyWithoutCheckerNestedInput
+    hrAccessRequestsTargeted?: HrAccessRequestUncheckedUpdateManyWithoutTargetNestedInput
+  }
+
+  export type EmployeeUpsertWithoutHrAccessRequestsCheckedInput = {
+    update: XOR<EmployeeUpdateWithoutHrAccessRequestsCheckedInput, EmployeeUncheckedUpdateWithoutHrAccessRequestsCheckedInput>
+    create: XOR<EmployeeCreateWithoutHrAccessRequestsCheckedInput, EmployeeUncheckedCreateWithoutHrAccessRequestsCheckedInput>
+    where?: EmployeeWhereInput
+  }
+
+  export type EmployeeUpdateToOneWithWhereWithoutHrAccessRequestsCheckedInput = {
+    where?: EmployeeWhereInput
+    data: XOR<EmployeeUpdateWithoutHrAccessRequestsCheckedInput, EmployeeUncheckedUpdateWithoutHrAccessRequestsCheckedInput>
+  }
+
+  export type EmployeeUpdateWithoutHrAccessRequestsCheckedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    position?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    photoObjectKey?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+    role?: EnumEmployeeRoleFieldUpdateOperationsInput | $Enums.EmployeeRole
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    authProvider?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attendanceSessions?: AttendanceSessionUpdateManyWithoutEmployeeNestedInput
+    profileChangeEvents?: ProfileChangeEventUpdateManyWithoutEmployeeNestedInput
+    hrAccessRequestsMade?: HrAccessRequestUpdateManyWithoutMakerNestedInput
+    hrAccessRequestsTargeted?: HrAccessRequestUpdateManyWithoutTargetNestedInput
+  }
+
+  export type EmployeeUncheckedUpdateWithoutHrAccessRequestsCheckedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    position?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    photoObjectKey?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+    role?: EnumEmployeeRoleFieldUpdateOperationsInput | $Enums.EmployeeRole
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    authProvider?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attendanceSessions?: AttendanceSessionUncheckedUpdateManyWithoutEmployeeNestedInput
+    profileChangeEvents?: ProfileChangeEventUncheckedUpdateManyWithoutEmployeeNestedInput
+    hrAccessRequestsMade?: HrAccessRequestUncheckedUpdateManyWithoutMakerNestedInput
+    hrAccessRequestsTargeted?: HrAccessRequestUncheckedUpdateManyWithoutTargetNestedInput
+  }
+
+  export type EmployeeUpsertWithoutHrAccessRequestsTargetedInput = {
+    update: XOR<EmployeeUpdateWithoutHrAccessRequestsTargetedInput, EmployeeUncheckedUpdateWithoutHrAccessRequestsTargetedInput>
+    create: XOR<EmployeeCreateWithoutHrAccessRequestsTargetedInput, EmployeeUncheckedCreateWithoutHrAccessRequestsTargetedInput>
+    where?: EmployeeWhereInput
+  }
+
+  export type EmployeeUpdateToOneWithWhereWithoutHrAccessRequestsTargetedInput = {
+    where?: EmployeeWhereInput
+    data: XOR<EmployeeUpdateWithoutHrAccessRequestsTargetedInput, EmployeeUncheckedUpdateWithoutHrAccessRequestsTargetedInput>
+  }
+
+  export type EmployeeUpdateWithoutHrAccessRequestsTargetedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    position?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    photoObjectKey?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+    role?: EnumEmployeeRoleFieldUpdateOperationsInput | $Enums.EmployeeRole
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    authProvider?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attendanceSessions?: AttendanceSessionUpdateManyWithoutEmployeeNestedInput
+    profileChangeEvents?: ProfileChangeEventUpdateManyWithoutEmployeeNestedInput
+    hrAccessRequestsMade?: HrAccessRequestUpdateManyWithoutMakerNestedInput
+    hrAccessRequestsChecked?: HrAccessRequestUpdateManyWithoutCheckerNestedInput
+  }
+
+  export type EmployeeUncheckedUpdateWithoutHrAccessRequestsTargetedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    position?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    photoObjectKey?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+    role?: EnumEmployeeRoleFieldUpdateOperationsInput | $Enums.EmployeeRole
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    mustChangePassword?: BoolFieldUpdateOperationsInput | boolean
+    authProvider?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attendanceSessions?: AttendanceSessionUncheckedUpdateManyWithoutEmployeeNestedInput
+    profileChangeEvents?: ProfileChangeEventUncheckedUpdateManyWithoutEmployeeNestedInput
+    hrAccessRequestsMade?: HrAccessRequestUncheckedUpdateManyWithoutMakerNestedInput
+    hrAccessRequestsChecked?: HrAccessRequestUncheckedUpdateManyWithoutCheckerNestedInput
   }
 
   export type AttendanceSessionCreateManyEmployeeInput = {
@@ -6368,6 +8952,54 @@ export namespace Prisma {
     afterValues?: NullableJsonNullValueInput | InputJsonValue
     occurredAt?: Date | string
     publishedAt?: Date | string | null
+  }
+
+  export type HrAccessRequestCreateManyMakerInput = {
+    id?: string
+    type: $Enums.HrAccessRequestType
+    state?: $Enums.HrAccessRequestState
+    proposedName?: string | null
+    proposedEmail?: string | null
+    proposedPosition?: string | null
+    proposedPhone?: string | null
+    targetEmployeeId?: string | null
+    checkerEmployeeId?: string | null
+    decisionNote?: string | null
+    decidedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type HrAccessRequestCreateManyCheckerInput = {
+    id?: string
+    type: $Enums.HrAccessRequestType
+    state?: $Enums.HrAccessRequestState
+    proposedName?: string | null
+    proposedEmail?: string | null
+    proposedPosition?: string | null
+    proposedPhone?: string | null
+    targetEmployeeId?: string | null
+    makerEmployeeId: string
+    decisionNote?: string | null
+    decidedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type HrAccessRequestCreateManyTargetInput = {
+    id?: string
+    type: $Enums.HrAccessRequestType
+    state?: $Enums.HrAccessRequestState
+    proposedName?: string | null
+    proposedEmail?: string | null
+    proposedPosition?: string | null
+    proposedPhone?: string | null
+    makerEmployeeId: string
+    checkerEmployeeId?: string | null
+    decisionNote?: string | null
+    decidedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type AttendanceSessionUpdateWithoutEmployeeInput = {
@@ -6431,6 +9063,150 @@ export namespace Prisma {
     afterValues?: NullableJsonNullValueInput | InputJsonValue
     occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type HrAccessRequestUpdateWithoutMakerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumHrAccessRequestTypeFieldUpdateOperationsInput | $Enums.HrAccessRequestType
+    state?: EnumHrAccessRequestStateFieldUpdateOperationsInput | $Enums.HrAccessRequestState
+    proposedName?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    decisionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    decidedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    checker?: EmployeeUpdateOneWithoutHrAccessRequestsCheckedNestedInput
+    target?: EmployeeUpdateOneWithoutHrAccessRequestsTargetedNestedInput
+  }
+
+  export type HrAccessRequestUncheckedUpdateWithoutMakerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumHrAccessRequestTypeFieldUpdateOperationsInput | $Enums.HrAccessRequestType
+    state?: EnumHrAccessRequestStateFieldUpdateOperationsInput | $Enums.HrAccessRequestState
+    proposedName?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    targetEmployeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    checkerEmployeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    decisionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    decidedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HrAccessRequestUncheckedUpdateManyWithoutMakerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumHrAccessRequestTypeFieldUpdateOperationsInput | $Enums.HrAccessRequestType
+    state?: EnumHrAccessRequestStateFieldUpdateOperationsInput | $Enums.HrAccessRequestState
+    proposedName?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    targetEmployeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    checkerEmployeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    decisionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    decidedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HrAccessRequestUpdateWithoutCheckerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumHrAccessRequestTypeFieldUpdateOperationsInput | $Enums.HrAccessRequestType
+    state?: EnumHrAccessRequestStateFieldUpdateOperationsInput | $Enums.HrAccessRequestState
+    proposedName?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    decisionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    decidedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maker?: EmployeeUpdateOneRequiredWithoutHrAccessRequestsMadeNestedInput
+    target?: EmployeeUpdateOneWithoutHrAccessRequestsTargetedNestedInput
+  }
+
+  export type HrAccessRequestUncheckedUpdateWithoutCheckerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumHrAccessRequestTypeFieldUpdateOperationsInput | $Enums.HrAccessRequestType
+    state?: EnumHrAccessRequestStateFieldUpdateOperationsInput | $Enums.HrAccessRequestState
+    proposedName?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    targetEmployeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    makerEmployeeId?: StringFieldUpdateOperationsInput | string
+    decisionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    decidedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HrAccessRequestUncheckedUpdateManyWithoutCheckerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumHrAccessRequestTypeFieldUpdateOperationsInput | $Enums.HrAccessRequestType
+    state?: EnumHrAccessRequestStateFieldUpdateOperationsInput | $Enums.HrAccessRequestState
+    proposedName?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    targetEmployeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    makerEmployeeId?: StringFieldUpdateOperationsInput | string
+    decisionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    decidedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HrAccessRequestUpdateWithoutTargetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumHrAccessRequestTypeFieldUpdateOperationsInput | $Enums.HrAccessRequestType
+    state?: EnumHrAccessRequestStateFieldUpdateOperationsInput | $Enums.HrAccessRequestState
+    proposedName?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    decisionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    decidedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    maker?: EmployeeUpdateOneRequiredWithoutHrAccessRequestsMadeNestedInput
+    checker?: EmployeeUpdateOneWithoutHrAccessRequestsCheckedNestedInput
+  }
+
+  export type HrAccessRequestUncheckedUpdateWithoutTargetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumHrAccessRequestTypeFieldUpdateOperationsInput | $Enums.HrAccessRequestType
+    state?: EnumHrAccessRequestStateFieldUpdateOperationsInput | $Enums.HrAccessRequestState
+    proposedName?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    makerEmployeeId?: StringFieldUpdateOperationsInput | string
+    checkerEmployeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    decisionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    decidedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HrAccessRequestUncheckedUpdateManyWithoutTargetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumHrAccessRequestTypeFieldUpdateOperationsInput | $Enums.HrAccessRequestType
+    state?: EnumHrAccessRequestStateFieldUpdateOperationsInput | $Enums.HrAccessRequestState
+    proposedName?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    proposedPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    makerEmployeeId?: StringFieldUpdateOperationsInput | string
+    checkerEmployeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    decisionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    decidedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

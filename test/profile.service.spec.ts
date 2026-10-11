@@ -93,7 +93,6 @@ describe('ProfileService', () => {
         before: '+62-811-0000-4242',
         after: '0811-9999-1000',
       });
-      expect((await employeeRow()).phone).toBe('0811-9999-1000');
 
       const events = await eventsForSelf();
       expect(events).toHaveLength(1);
@@ -107,6 +106,7 @@ describe('ProfileService', () => {
         publishedAt: null,
       });
       expect(events[0].occurredAt).toBeInstanceOf(Date);
+      expect((await employeeRow()).phone).toBe('0811-9999-1000');
     });
 
     it('rolls the phone back when the event cannot be built after the write', async () => {

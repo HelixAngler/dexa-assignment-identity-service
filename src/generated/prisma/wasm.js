@@ -159,6 +159,23 @@ exports.Prisma.ProfileChangeEventScalarFieldEnum = {
   publishedAt: 'publishedAt'
 };
 
+exports.Prisma.HrAccessRequestScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  state: 'state',
+  proposedName: 'proposedName',
+  proposedEmail: 'proposedEmail',
+  proposedPosition: 'proposedPosition',
+  proposedPhone: 'proposedPhone',
+  targetEmployeeId: 'targetEmployeeId',
+  makerEmployeeId: 'makerEmployeeId',
+  checkerEmployeeId: 'checkerEmployeeId',
+  decisionNote: 'decisionNote',
+  decidedAt: 'decidedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -194,10 +211,26 @@ exports.EmployeeRole = exports.$Enums.EmployeeRole = {
   hrd: 'hrd'
 };
 
+exports.HrAccessRequestType = exports.$Enums.HrAccessRequestType = {
+  add_hr: 'add_hr',
+  deactivate_hr: 'deactivate_hr',
+  reactivate_hr: 'reactivate_hr',
+  reset_password: 'reset_password',
+  update_hr: 'update_hr'
+};
+
+exports.HrAccessRequestState = exports.$Enums.HrAccessRequestState = {
+  pending: 'pending',
+  approved: 'approved',
+  rejected: 'rejected',
+  withdrawn: 'withdrawn'
+};
+
 exports.Prisma.ModelName = {
   Employee: 'Employee',
   AttendanceSession: 'AttendanceSession',
-  ProfileChangeEvent: 'ProfileChangeEvent'
+  ProfileChangeEvent: 'ProfileChangeEvent',
+  HrAccessRequest: 'HrAccessRequest'
 };
 
 /**

@@ -177,6 +177,7 @@ describe('employee management (HRD)', () => {
   let hrdToken = '';
   let employeeRoleToken = '';
   let hrdEmployeeId = '';
+  let ownerEmail = '';
   let employeeRoleFixtureId = '';
   let defaultHook: HookServer;
   let originalAttendanceUrl: string | undefined;
@@ -260,7 +261,7 @@ describe('employee management (HRD)', () => {
     raw = new Redis(config.redisUrl);
     store = new SessionStore({ redisUrl: config.redisUrl });
 
-    const ownerEmail = uniqueEmail('hrd-owner');
+    ownerEmail = uniqueEmail('hrd-owner');
     const owner = await prisma.employee.upsert({
       where: { email: ownerEmail },
       update: {},
@@ -477,18 +478,73 @@ describe('employee management (HRD)', () => {
           'id',
           'name',
           'position',
+          'role',
           'status',
         ]);
         expect(row.status).toBe('active');
+        // Provisioned through the employee-create route, so a plain employee.
+        expect(row.role).toBe('employee');
         expect(typeof row.position).toBe('string');
       }
 
       const wholeList = response.body as Record<string, unknown>[];
+      const ownerRow = wholeList.find((row) => row.email === ownerEmail);
+      expect(ownerRow?.role).toBe('hrd');
       expect(
         wholeList.every(
-          (row) => !('passwordHash' in row) && !('mustChangePassword' in row),
+          (row) =>
+            !('passwordHash' in row) && !('mustChangePassword' in row),
         ),
       ).toBe(true);
+    });
+  });
+
+  describe('GET /employees/:id', () => {
+    it('answers with one account, phone included and secrets excluded', async () => {
+      const row = await provision('single-record', {
+        name: 'Single Record Name',
+        phone: '+62-811-0000-0909',
+      });
+
+      const response = await call('get', `${EMPLOYEES_URL}/${row.id}`, hrdToken);
+
+      expect(response.status).toBe(200);
+      expect(Object.keys(response.body).sort()).toEqual([
+        'email',
+        'id',
+        'name',
+        'phone',
+        'position',
+        'role',
+        'status',
+      ]);
+      expect(response.body).toMatchObject({
+        id: row.id,
+        email: row.email,
+        name: 'Single Record Name',
+        phone: '+62-811-0000-0909',
+        status: 'active',
+        role: 'employee',
+      });
+      expect(
+        'passwordHash' in (response.body as Record<string, unknown>) ||
+          'mustChangePassword' in (response.body as Record<string, unknown>),
+      ).toBe(false);
+    });
+
+    it('answers 404 NOT_FOUND for an id no employee carries', async () => {
+      const response = await call(
+        'get',
+        `${EMPLOYEES_URL}/11111111-2222-3333-4444-555555555555`,
+        hrdToken,
+      );
+
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({
+        statusCode: 404,
+        code: 'NOT_FOUND',
+        message: expect.any(String),
+      });
     });
   });
 
@@ -581,10 +637,12 @@ describe('employee management (HRD)', () => {
           'id',
           'name',
           'position',
+          'role',
           'status',
         ]);
         expect(response.body).toMatchObject({
           id: employee.id,
+          role: 'employee',
           status: 'deactivated',
         });
       } finally {
@@ -782,6 +840,7 @@ describe('employee management (HRD)', () => {
         'id',
         'name',
         'position',
+        'role',
         'status',
       ]);
       expect(updated.body).toEqual({
@@ -789,6 +848,7 @@ describe('employee management (HRD)', () => {
         name: 'Renamed Person',
         email: renamed,
         position: 'Data Engineer',
+        role: 'employee',
         status: 'active',
       });
 
@@ -841,6 +901,133 @@ describe('employee management (HRD)', () => {
           message: ERROR_MESSAGES.id.NOT_FOUND,
         });
       }
+    });
+  });
+
+  describe('HR accounts are reachable only through maker-checker', () => {
+    /** An HR account written straight to the table, as a guard target. */
+    const createHrdRow = async (
+      label: string,
+    ): Promise<{ id: string; email: string }> => {
+      const email = uniqueEmail(label);
+      createdEmails.push(email);
+      const row = await prisma.employee.create({
+        data: {
+          email,
+          name: 'HR Target (employees suite)',
+          position: 'HR Officer',
+          phone: '+62-811-0000-9019',
+          role: 'hrd',
+          status: 'active',
+          passwordHash: 'unused-hash',
+          mustChangePassword: false,
+        },
+        select: { id: true },
+      });
+      createdEmployeeIds.push(row.id);
+      return { id: row.id, email };
+    };
+
+    it('answers 403 FORBIDDEN on edit, status and reset aimed at an HR account, leaving the row untouched', async () => {
+      const target = await createHrdRow('guard-hrd');
+      const before = await prisma.employee.findUnique({
+        where: { id: target.id },
+      });
+
+      const update = await postJson(
+        'patch',
+        `${EMPLOYEES_URL}/${target.id}`,
+        hrdToken,
+        { name: 'Renamed HR', email: uniqueEmail('guard-hrd-renamed') },
+      );
+      const deactivate = await postJson(
+        'patch',
+        `${EMPLOYEES_URL}/${target.id}/status`,
+        hrdToken,
+        { status: 'deactivated' },
+      );
+      const reset = await call(
+        'post',
+        `${EMPLOYEES_URL}/${target.id}/reset-password`,
+        hrdToken,
+      );
+
+      for (const response of [update, deactivate, reset]) {
+        expect(response.status).toBe(403);
+        expect(response.body).toEqual({
+          statusCode: 403,
+          code: 'FORBIDDEN',
+          message: ERROR_MESSAGES.id.FORBIDDEN,
+        });
+      }
+
+      // Every route refused before anything was written.
+      expect(await prisma.employee.findUnique({ where: { id: target.id } })).toEqual(
+        before,
+      );
+      expect(before?.role).toBe('hrd');
+      expect(before?.status).toBe('active');
+    });
+
+    it('answers 403 FORBIDDEN for reactivation of a deactivated HR account too', async () => {
+      const target = await createHrdRow('guard-hrd-down');
+      await prisma.employee.update({
+        where: { id: target.id },
+        data: { status: 'deactivated', updatedAt: new Date() },
+      });
+
+      const response = await postJson(
+        'patch',
+        `${EMPLOYEES_URL}/${target.id}/status`,
+        hrdToken,
+        { status: 'active' },
+      );
+
+      expect(response.status).toBe(403);
+      expect(
+        (await prisma.employee.findUnique({ where: { id: target.id } }))?.status,
+      ).toBe('deactivated');
+    });
+
+    it('keeps edit, reset and status working for regular-employee targets', async () => {
+      const employee = await provision('guard-regular');
+      const renamed = uniqueEmail('guard-regular-renamed');
+      createdEmails.push(renamed);
+
+      const updated = await postJson(
+        'patch',
+        `${EMPLOYEES_URL}/${employee.id}`,
+        hrdToken,
+        { name: 'Still Editable', email: renamed },
+      );
+      expect(updated.status).toBe(200);
+      expect(updated.body).toMatchObject({
+        id: employee.id,
+        name: 'Still Editable',
+        email: renamed,
+        role: 'employee',
+        status: 'active',
+      });
+
+      const reset = await call(
+        'post',
+        `${EMPLOYEES_URL}/${employee.id}/reset-password`,
+        hrdToken,
+      );
+      expect(reset.status).toBe(200);
+      expect(reset.body).toEqual({ temporaryPassword: expect.any(String) });
+
+      const flipped = await postJson(
+        'patch',
+        `${EMPLOYEES_URL}/${employee.id}/status`,
+        hrdToken,
+        { status: 'deactivated' },
+      );
+      expect(flipped.status).toBe(200);
+      expect(flipped.body).toMatchObject({
+        id: employee.id,
+        status: 'deactivated',
+      });
     });
   });
 

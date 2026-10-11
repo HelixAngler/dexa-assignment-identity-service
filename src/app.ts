@@ -1,5 +1,5 @@
 import type { INestApplication } from '@nestjs/common';
-import { Logger, Module } from '@nestjs/common';
+import { Global, Logger, Module } from '@nestjs/common';
 import { APP_FILTER, NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 import { AuthController } from './auth/auth.controller';
@@ -14,6 +14,7 @@ import { CloseOpenClient } from './employees/close-open.client';
 import { EmployeesController } from './employees/employees.controller';
 import { EmployeesService } from './employees/employees.service';
 import { HealthController } from './health.controller';
+import { HrAccessModule } from './hr-access/hr-access.module';
 import { PasswordChangeController } from './profile/password.controller';
 import { PhotoController } from './profile/photo.controller';
 import { PhotoStorage } from './profile/photo.storage';
@@ -23,7 +24,16 @@ import { ProfileService } from './profile/profile.service';
 // Kept re-exported: this used to be where the prefix constant lived.
 export { GLOBAL_PREFIX };
 
+/**
+ * The application root, also marked global: imported feature modules
+ * (currently HrAccessModule) resolve the exported tokens below from here
+ * without importing this module back, which would close a circular import.
+ * That is what lets the maker-checker feature share one connection pool, one
+ * session store and one employee-creation path with the rest of the service.
+ */
+@Global()
 @Module({
+  imports: [HrAccessModule],
   controllers: [
     HealthController,
     AuthController,
@@ -45,6 +55,7 @@ export { GLOBAL_PREFIX };
     EmployeesService,
     CloseOpenClient,
   ],
+  exports: [PrismaService, SessionStore, EmployeesService],
 })
 class AppModule {}
 

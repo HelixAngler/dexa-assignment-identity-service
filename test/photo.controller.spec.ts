@@ -417,11 +417,6 @@ describe('profile photo endpoints', () => {
         role: 'employee',
       });
 
-      const employee = await prisma.employee.findUnique({
-        where: { id: ownerId },
-      });
-      expect(employee?.photoObjectKey).toBe(objectKey);
-
       const events = await eventsFor(ownerId);
       expect(events).toHaveLength(1);
       expect(events[0]).toMatchObject({
@@ -433,6 +428,11 @@ describe('profile photo endpoints', () => {
         afterValues: { photo: objectKey },
         publishedAt: null,
       });
+
+      const employee = await prisma.employee.findUnique({
+        where: { id: ownerId },
+      });
+      expect(employee?.photoObjectKey).toBe(objectKey);
 
       const profile = await getProfile(token);
       expect(profile.status).toBe(200);
